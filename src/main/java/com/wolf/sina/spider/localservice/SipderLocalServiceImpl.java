@@ -6,10 +6,25 @@ import com.wolf.framework.dao.condition.InquirePageContext;
 import com.wolf.framework.local.LocalServiceConfig;
 import com.wolf.sina.spider.entity.SpiderUserEntity;
 import com.wolf.sina.utils.SeleniumUtils;
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import org.apache.http.Header;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.params.ClientPNames;
+import org.apache.http.client.params.CookiePolicy;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.PoolingClientConnectionManager;
+import org.apache.http.message.BasicHeader;
+import org.apache.http.params.HttpConnectionParams;
 import org.openqa.selenium.By;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
@@ -25,17 +40,60 @@ import org.openqa.selenium.firefox.FirefoxProfile;
         interfaceInfo = SpiderLocalService.class,
         description = "爬虫相关接口")
 public class SipderLocalServiceImpl implements SpiderLocalService {
-
+    
     @InjectRDao(clazz = SpiderUserEntity.class)
     private REntityDao<SpiderUserEntity> spiderUserEntityDao;
     //http client
     private volatile HttpClientManager httpClientManager;
-
+    //登录页面
+    private final String rootUrl = "http://weibo.com/";
+    private final String userNameXpath = "//*[@id=\"pl_login_form\"]/div[5]/div[1]/div/input";
+    private final String passwordXpath = "//*[@id=\"pl_login_form\"]/div[5]/div[2]/div/input";
+    private final String loginBtnXpath = "//*[@id=\"pl_login_form\"]/div[5]/div[6]/div[1]/a";
+    //
+    private final Pattern filterPattern = Pattern.compile("\\\\t|\\\\n|\\\\r|\\\\");
+    //
+    //获取用户详细信息
+    private final String infoPath = "${id}/info?from=page_100505&mod=TAB&ajaxpagelet=1";
+    private final Pattern replaceIdPattern = Pattern.compile("\\$\\{id\\}");
+    private final Pattern infoValuePattern = Pattern.compile("(?:\"con\">)([\\w\\W]*?)(?:<)");
+    private final Pattern infoLablePattern = Pattern.compile("(?:\"label S_txt2\">)([\\w\\W]*?)(?:<)");
+    private final Pattern infoTagPattern = Pattern.compile("(?:\"tag\">)([\\w\\W]*?)(?:<)");
+    //获取粉丝信息
+    private final String followPath = "${id}/follow?pids=Pl_Official_LeftHisRelation__25&page=${page}&ajaxpagelet=1";
+    private final Pattern replacePagePattern = Pattern.compile("\\$\\{page\\}");
+    private final Pattern followPattern = Pattern.compile("(?:\\&uid=)(\\d*)");
+    
     @Override
     public void init() {
         //初始化http client
+        this.rebuildHttpClientManager();
     }
-
+    
+    @Override
+    public void rebuildHttpClientManager() {
+        PoolingClientConnectionManager cm;
+        DefaultHttpClient httpClient;
+        Header header;
+        HttpClientManager hcm = new HttpClientManager();
+        List<SpiderUserEntity> spiderUserEntityList = this.inquireSpiderUser();
+        long thisTime = System.currentTimeMillis();
+        for (SpiderUserEntity spiderUserEntity : spiderUserEntityList) {
+            if (spiderUserEntity.getCookie().isEmpty() == false && spiderUserEntity.getLastUpdateTime() >= thisTime - 21600000) {
+                cm = new PoolingClientConnectionManager();
+                cm.setMaxTotal(10);
+                httpClient = new DefaultHttpClient(cm);
+                List<Header> headerList = new ArrayList<Header>(10);
+                header = new BasicHeader("Cookie", spiderUserEntity.getCookie());
+                headerList.add(header);
+                httpClient.getParams().setParameter(ClientPNames.DEFAULT_HEADERS, headerList);
+                httpClient.getParams().setParameter(ClientPNames.COOKIE_POLICY, CookiePolicy.IGNORE_COOKIES);
+                hcm.add(httpClient);
+            }
+        }
+        this.httpClientManager = hcm;
+    }
+    
     @Override
     public void insertSpiderUser(String userName, String password) {
         Map<String, String> insertMap = new HashMap<String, String>(2, 1);
@@ -50,33 +108,29 @@ public class SipderLocalServiceImpl implements SpiderLocalService {
     public void updateSpiderUser(Map<String, String> updateMap) {
         this.spiderUserEntityDao.update(updateMap);
     }
-
+    
     @Override
     public List<SpiderUserEntity> inquireSpiderUser() {
         InquirePageContext inquirePageContext = new InquirePageContext();
         inquirePageContext.setPageSize(100);
         return this.spiderUserEntityDao.inquire(inquirePageContext);
     }
-
+    
     @Override
     public void deleteSpiderUser(String userName) {
         this.spiderUserEntityDao.delete(userName);
     }
-    private final String loginUrl = "http://weibo.com/";
-    private final String userNameXpath = "//*[@id=\"pl_login_form\"]/div[5]/div[1]/div/input";
-    private final String passwordXpath = "//*[@id=\"pl_login_form\"]/div[5]/div[2]/div/input";
-    private final String loginBtnXpath = "//*[@id=\"pl_login_form\"]/div[5]/div[6]/div[1]/a";
-
+    
     @Override
     public String getCookieByLogin(String userName, String password) {
         FirefoxProfile fp = new FirefoxProfile();
         WebDriver webDriver = new FirefoxDriver(fp);
         //清除cookie
-        webDriver.get(this.loginUrl);
+        webDriver.get(this.rootUrl);
         SeleniumUtils.waitUntilReady(webDriver, 60);
         webDriver.manage().deleteAllCookies();
         //刷新
-        webDriver.get(this.loginUrl);
+        webDriver.get(this.rootUrl);
         SeleniumUtils.waitUntilReady(webDriver, 60);
         //输入帐号密码
         WebElement userNameElement = webDriver.findElement(By.xpath(this.userNameXpath));
@@ -87,13 +141,136 @@ public class SipderLocalServiceImpl implements SpiderLocalService {
         WebElement loginBtnElement = webDriver.findElement(By.xpath(this.loginBtnXpath));
         loginBtnElement.click();
         //等待页面跳转
-        SeleniumUtils.waitUrlChange(this.loginUrl, webDriver, 60);
+        SeleniumUtils.waitUrlChange(this.rootUrl, webDriver, 60);
         Set<Cookie> allCookies = webDriver.manage().getCookies();
         Map<String, String> loginCookieMap = new HashMap<String, String>(16, 1);
         for (Cookie cookie : allCookies) {
             loginCookieMap.put(cookie.getName(), cookie.getValue());
         }
         String result = SeleniumUtils.createCookie(loginCookieMap);
+        webDriver.close();
         return result;
+    }
+    
+    private String getUrl(String url) {
+        System.out.println(url);
+        String responseBody = "";
+        DefaultHttpClient client = this.httpClientManager.getClient();
+        ResponseHandler<String> responseHandler = new BasicResponseHandler();
+        HttpGet httpGet = new HttpGet(url);
+        HttpConnectionParams.setConnectionTimeout(httpGet.getParams(), 20000);
+        HttpConnectionParams.setSoTimeout(httpGet.getParams(), 20000);
+        try {
+            responseBody = client.execute(httpGet, responseHandler);
+        } catch (IOException ex) {
+        }
+        return responseBody;
+    }
+    
+    @Override
+    public InfoEntity getInfo(String userId) {
+        InfoEntity infoEntity = null;
+        String path = this.replaceIdPattern.matcher(this.infoPath).replaceFirst(userId);
+        String url = this.rootUrl.concat(path);
+        String response = this.getUrl(url);
+        int index = response.lastIndexOf("基本信息");
+        if (index > -1) {
+            infoEntity = new InfoEntity(userId);
+            response = response.substring(index);
+            String infoBase = response;
+            index = infoBase.indexOf("</script>");
+            infoBase = infoBase.substring(0, index);
+            infoBase = this.filterPattern.matcher(infoBase).replaceAll("");
+            //获取label
+            Matcher infoLabelMatcher = this.infoLablePattern.matcher(infoBase);
+            List<String> labelList = new ArrayList<String>(8);
+            while (infoLabelMatcher.find()) {
+                labelList.add(infoLabelMatcher.group(1));
+            }
+            //获取label value
+            Matcher infoValueMatcher = this.infoValuePattern.matcher(infoBase);
+            List<String> valueList = new ArrayList<String>(8);
+            while (infoValueMatcher.find()) {
+                valueList.add(infoValueMatcher.group(1));
+            }
+            //获取用户信息标值
+            String name;
+            String value;
+            for (int num = 0; num < labelList.size() && num < valueList.size(); num++) {
+                name = labelList.get(num);
+                value = valueList.get(num);
+                if (name.length() > 0) {
+                    if (name.equals("昵称")) {
+                        infoEntity.setNickName(value);
+                    } else if (name.equals("所在地")) {
+                        infoEntity.setLocation(value);
+                    } else if (name.equals("性别")) {
+                        infoEntity.setGender(value);
+                    } else if (name.equals("真实姓名")) {
+                        infoEntity.setEmpName(value);
+                    }
+                }
+            }
+            //获取标签
+            index = response.lastIndexOf("标签信息");
+            if (index > -1) {
+                String infoTag = response.substring(index);
+                index = infoTag.indexOf("</script>");
+                infoTag = infoTag.substring(0, index);
+                infoTag = this.filterPattern.matcher(infoTag).replaceAll("");
+                Matcher infoTagMatcher = this.infoTagPattern.matcher(infoTag);
+                StringBuilder tagBuilder = new StringBuilder(256);
+                while (infoTagMatcher.find()) {
+                    value = infoTagMatcher.group(1);
+                    tagBuilder.append(value.toLowerCase()).append(',');
+                }
+                if (tagBuilder.length() > 0) {
+                    tagBuilder.setLength(tagBuilder.length() - 1);
+                }
+                String tag = tagBuilder.toString();
+                infoEntity.setTag(tag);
+            }
+        }
+        return infoEntity;
+    }
+    
+    @Override
+    public List<String> getFollow(String userId) {
+        Set<String> followSet = new HashSet<String>(64, 1);
+        String path = this.replaceIdPattern.matcher(this.followPath).replaceFirst(userId);
+        String url = this.rootUrl.concat(path);
+        String response;
+        String pageUrl;
+        int index;
+        String followText;
+        Matcher followMatcher;
+        String id;
+        boolean hasNext = true;
+        for (int page = 1; page <= 10 && hasNext; page++) {
+            pageUrl = this.replacePagePattern.matcher(url).replaceFirst(Integer.toString(page));
+            response = this.getUrl(pageUrl);
+            index = response.lastIndexOf("他的关注");
+            if (index > -1) {
+                followText = response.substring(index);
+                index = followText.indexOf("</script>");
+                followText = followText.substring(0, index);
+                followText = this.filterPattern.matcher(followText).replaceAll("");
+                followMatcher = this.followPattern.matcher(followText);
+                while (followMatcher.find()) {
+                    id = followMatcher.group(1);
+                    if (followSet.contains(id)) {
+                        hasNext = false;
+                        break;
+                    } else {
+                        followSet.add(id);
+                    }
+                }
+            } else {
+                break;
+            }
+        }
+        List<String> followList = new ArrayList<String>(followSet.size());
+        followList.addAll(followSet);
+        return followList;
     }
 }

@@ -20,4 +20,10 @@ public interface SpiderLocalService extends Local {
     public void deleteSpiderUser(String userName);
     
     public String getCookieByLogin(String userName, String password);
+    
+    public void rebuildHttpClientManager();
+    
+    public InfoEntity getInfo(String userId);
+    
+    public List<String> getFollow(String userId);
 }
