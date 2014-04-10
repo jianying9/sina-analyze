@@ -40,7 +40,7 @@ import org.openqa.selenium.firefox.FirefoxProfile;
         interfaceInfo = SpiderLocalService.class,
         description = "爬虫相关接口")
 public class SipderLocalServiceImpl implements SpiderLocalService {
-    
+
     @InjectRDao(clazz = SpiderUserEntity.class)
     private REntityDao<SpiderUserEntity> spiderUserEntityDao;
     //http client
@@ -63,13 +63,13 @@ public class SipderLocalServiceImpl implements SpiderLocalService {
     private final String followPath = "${id}/follow?pids=Pl_Official_LeftHisRelation__25&page=${page}&ajaxpagelet=1";
     private final Pattern replacePagePattern = Pattern.compile("\\$\\{page\\}");
     private final Pattern followPattern = Pattern.compile("(?:\\&uid=)(\\d*)");
-    
+
     @Override
     public void init() {
         //初始化http client
         this.rebuildHttpClientManager();
     }
-    
+
     @Override
     public void rebuildHttpClientManager() {
         PoolingClientConnectionManager cm;
@@ -79,7 +79,8 @@ public class SipderLocalServiceImpl implements SpiderLocalService {
         List<SpiderUserEntity> spiderUserEntityList = this.inquireSpiderUser();
         long thisTime = System.currentTimeMillis();
         for (SpiderUserEntity spiderUserEntity : spiderUserEntityList) {
-            if (spiderUserEntity.getCookie().isEmpty() == false && spiderUserEntity.getLastUpdateTime() >= thisTime - 21600000) {
+            if (spiderUserEntity.getCookie().isEmpty() == false && spiderUserEntity.getLastUpdateTime() >= thisTime - 43200000) {
+                System.out.println("有效的帐号:" + spiderUserEntity.getUserName());
                 cm = new PoolingClientConnectionManager();
                 cm.setMaxTotal(10);
                 httpClient = new DefaultHttpClient(cm);
@@ -93,7 +94,7 @@ public class SipderLocalServiceImpl implements SpiderLocalService {
         }
         this.httpClientManager = hcm;
     }
-    
+
     @Override
     public void insertSpiderUser(String userName, String password) {
         Map<String, String> insertMap = new HashMap<String, String>(2, 1);
@@ -103,45 +104,53 @@ public class SipderLocalServiceImpl implements SpiderLocalService {
         insertMap.put("lastUpdateTime", "1");
         this.spiderUserEntityDao.insert(insertMap);
     }
-    
+
     @Override
     public void updateSpiderUser(Map<String, String> updateMap) {
         this.spiderUserEntityDao.update(updateMap);
     }
-    
+
     @Override
     public List<SpiderUserEntity> inquireSpiderUser() {
         InquirePageContext inquirePageContext = new InquirePageContext();
         inquirePageContext.setPageSize(100);
         return this.spiderUserEntityDao.inquire(inquirePageContext);
     }
-    
+
     @Override
     public void deleteSpiderUser(String userName) {
         this.spiderUserEntityDao.delete(userName);
     }
-    
+
     @Override
     public String getCookieByLogin(String userName, String password) {
+        System.out.println(userName + ":开始刷新cookie");
         FirefoxProfile fp = new FirefoxProfile();
         WebDriver webDriver = new FirefoxDriver(fp);
         //清除cookie
-        webDriver.get(this.rootUrl);
-        SeleniumUtils.waitUntilReady(webDriver, 60);
-        webDriver.manage().deleteAllCookies();
+//        System.out.println(userName + ":清除cookie");
+//        webDriver.get(this.rootUrl);
+//        SeleniumUtils.waitUntilReady(webDriver, 60);
+//        webDriver.manage().deleteAllCookies();
         //刷新
+        System.out.println(userName + ":打开登录页面");
         webDriver.get(this.rootUrl);
-        SeleniumUtils.waitUntilReady(webDriver, 60);
+        SeleniumUtils.waitUntilReady(webDriver, this.userNameXpath, 60);
+        System.out.println(userName + ":输入帐号");
         //输入帐号密码
         WebElement userNameElement = webDriver.findElement(By.xpath(this.userNameXpath));
         userNameElement.sendKeys(userName);
+        System.out.println(password + ":输入密码");
         WebElement passwordElement = webDriver.findElement(By.xpath(this.passwordXpath));
         passwordElement.sendKeys(password);
         //登录
+        System.out.println(userName + ":点击登录按钮");
         WebElement loginBtnElement = webDriver.findElement(By.xpath(this.loginBtnXpath));
         loginBtnElement.click();
         //等待页面跳转
+        System.out.println(userName + ":等待登录成功页面跳转");
         SeleniumUtils.waitUrlChange(this.rootUrl, webDriver, 60);
+        System.out.println(userName + ":登录成功获取cookie");
         Set<Cookie> allCookies = webDriver.manage().getCookies();
         Map<String, String> loginCookieMap = new HashMap<String, String>(16, 1);
         for (Cookie cookie : allCookies) {
@@ -149,9 +158,16 @@ public class SipderLocalServiceImpl implements SpiderLocalService {
         }
         String result = SeleniumUtils.createCookie(loginCookieMap);
         webDriver.close();
+        //验证cookie是否有效
+        if (result.indexOf("SUE=") == -1) {
+            System.out.println(userName + ":获取cookie无效");
+            result = "";
+        } else {
+            System.out.println(userName + ":获取cookie成功");
+        }
         return result;
     }
-    
+
     private String getUrl(String url) {
         System.out.println(url);
         String responseBody = "";
@@ -166,7 +182,7 @@ public class SipderLocalServiceImpl implements SpiderLocalService {
         }
         return responseBody;
     }
-    
+
     @Override
     public InfoEntity getInfo(String userId) {
         InfoEntity infoEntity = null;
@@ -233,7 +249,7 @@ public class SipderLocalServiceImpl implements SpiderLocalService {
         }
         return infoEntity;
     }
-    
+
     @Override
     public List<String> getFollow(String userId) {
         Set<String> followSet = new HashSet<String>(64, 1);

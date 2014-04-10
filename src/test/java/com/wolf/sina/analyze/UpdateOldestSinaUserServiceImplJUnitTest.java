@@ -29,6 +29,7 @@ public class UpdateOldestSinaUserServiceImplJUnitTest extends AbstractSinaAnalyz
     @Test
     public void test() {
         Map<String, String> parameterMap = new HashMap<String, String>(2, 1);
+        parameterMap.put("operate", "test");
         String result = this.testHandler.execute(ActionNames.UPDATE_OLDEST_SINA_USER, parameterMap);
         System.out.println(result);
     }

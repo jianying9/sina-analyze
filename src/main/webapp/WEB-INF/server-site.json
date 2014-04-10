@@ -16,7 +16,7 @@
         "describe": "线程最大存活数量"
     },
     "redis.server.host": {
-        "value": "127.0.0.1",
+        "value": "192.168.235.234",
         "describe": "redis服务器ip"
     },
     "redis.server.port": {

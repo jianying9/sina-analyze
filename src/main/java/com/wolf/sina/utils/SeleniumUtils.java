@@ -31,9 +31,9 @@ public class SeleniumUtils {
         webDriverWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(bodyXpath)));
     }
 
-    public static void waitUntilReady(WebDriver webDriver, long timeOutInSeconds) {
+    public static void waitUntilReady(WebDriver webDriver, String xPath, long timeOutInSeconds) {
         WebDriverWait webDriverWait = new WebDriverWait(webDriver, timeOutInSeconds);
-        webDriverWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(bodyXpath)));
+        webDriverWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(xPath)));
     }
 
     public static Map<String, String> parseCookie(String cookies) {
