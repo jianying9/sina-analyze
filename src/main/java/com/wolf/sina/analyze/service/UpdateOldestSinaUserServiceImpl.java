@@ -85,6 +85,16 @@ public class UpdateOldestSinaUserServiceImpl implements Service {
         }
     }
 
+    private void spiderRun() {
+        Task task;
+        long pageIndex;
+        for (int index = 0; index < 4; index++) {
+            pageIndex = index * 20 + 1;
+            task = new RunTaskImpl(pageIndex);
+            this.taskExecutor.submit(task);
+        }
+    }
+
     @Override
     public void execute(MessageContext messageContext) {
         String op = messageContext.getParameter("operate");
@@ -97,8 +107,7 @@ public class UpdateOldestSinaUserServiceImpl implements Service {
             }
         } else if (op.equals("run")) {
             //执行
-            Task task = new RunTaskImpl();
-            this.taskExecutor.submit(task);
+            this.spiderRun();
         } else if (op.equals("stop")) {
             //停止
             System.out.println("停止爬虫任务......");
@@ -108,8 +117,7 @@ public class UpdateOldestSinaUserServiceImpl implements Service {
             this.taskExecutor.submit(task);
         } else if (op.equals("check")) {
             if (this.operate.equals("stop")) {
-                Task task = new RunTaskImpl();
-                this.taskExecutor.submit(task);
+                this.spiderRun();
             }
         }
         Map<String, String> resultMap = new HashMap<String, String>(2, 1);
@@ -123,6 +131,12 @@ public class UpdateOldestSinaUserServiceImpl implements Service {
      */
     private class RunTaskImpl implements Task {
 
+        private final long pageIndex;
+
+        public RunTaskImpl(long pageIndex) {
+            this.pageIndex = pageIndex;
+        }
+
         @Override
         public void doWhenRejected() {
             operate = "stop";
@@ -134,7 +148,7 @@ public class UpdateOldestSinaUserServiceImpl implements Service {
             operate = "run";
             System.out.println("开始执行爬虫任务......");
             while (operate.equals("run")) {
-                List<SinaUserEntity> sinaUserEntityList = sinaLocalService.inquireSinaUser(1, 1);
+                List<SinaUserEntity> sinaUserEntityList = sinaLocalService.inquireSinaUser(this.pageIndex, 1);
                 if (sinaUserEntityList.isEmpty() == false) {
                     userId = sinaUserEntityList.get(0).getUserId();
                     updateSinaUser(userId);
@@ -173,8 +187,7 @@ public class UpdateOldestSinaUserServiceImpl implements Service {
             //重新启动任务
             System.out.println("重新启动爬虫任务...");
             operate = "stop";
-            Task task = new RunTaskImpl();
-            taskExecutor.submit(task);
+            spiderRun();
         }
     }
 }
