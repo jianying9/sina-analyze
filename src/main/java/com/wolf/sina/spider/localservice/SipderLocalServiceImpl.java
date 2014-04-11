@@ -79,7 +79,7 @@ public class SipderLocalServiceImpl implements SpiderLocalService {
         List<SpiderUserEntity> spiderUserEntityList = this.inquireSpiderUser();
         long thisTime = System.currentTimeMillis();
         for (SpiderUserEntity spiderUserEntity : spiderUserEntityList) {
-            if (spiderUserEntity.getCookie().isEmpty() == false && spiderUserEntity.getLastUpdateTime() >= thisTime - 43200000) {
+            if (spiderUserEntity.getCookie().isEmpty() == false) {
                 System.out.println("有效的帐号:" + spiderUserEntity.getUserName());
                 cm = new PoolingClientConnectionManager();
                 cm.setMaxTotal(10);
@@ -135,7 +135,7 @@ public class SipderLocalServiceImpl implements SpiderLocalService {
         //刷新
         System.out.println(userName + ":打开登录页面");
         webDriver.get(this.rootUrl);
-        SeleniumUtils.waitUntilReady(webDriver, this.userNameXpath, 60);
+        SeleniumUtils.waitUntilReady(webDriver, this.userNameXpath, 120);
         System.out.println(userName + ":输入帐号");
         //输入帐号密码
         WebElement userNameElement = webDriver.findElement(By.xpath(this.userNameXpath));
@@ -149,7 +149,7 @@ public class SipderLocalServiceImpl implements SpiderLocalService {
         loginBtnElement.click();
         //等待页面跳转
         System.out.println(userName + ":等待登录成功页面跳转");
-        SeleniumUtils.waitUrlChange(this.rootUrl, webDriver, 60);
+        SeleniumUtils.waitUrlChange(this.rootUrl, webDriver, 120);
         System.out.println(userName + ":登录成功获取cookie");
         Set<Cookie> allCookies = webDriver.manage().getCookies();
         Map<String, String> loginCookieMap = new HashMap<String, String>(16, 1);

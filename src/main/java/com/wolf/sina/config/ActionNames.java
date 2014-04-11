@@ -18,6 +18,8 @@ public class ActionNames {
     public final static String DELETE_SPIDER_USER = "DELETE_SPIDER_USER";
     //查询爬虫帐号
     public final static String INQUIRE_SPIDER_USER = "INQUIRE_SPIDER_USER";
+    //获取爬虫帐号cookie
+    public final static String UPDATE_SPIDER_USER_COOKIE = "UPDATE_SPIDER_USER_COOKIE";
     //-------------------------sina---------------------------------//
     //新增sina用户
     public final static String INSERT_SINA_USER = "INSERT_SINA_USER";

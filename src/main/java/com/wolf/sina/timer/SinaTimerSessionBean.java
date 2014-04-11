@@ -16,7 +16,7 @@ import javax.ejb.Singleton;
 @Startup
 public class SinaTimerSessionBean extends AbstractTimer implements SinaTimerSessionBeanLocal {
 
-    @Schedule(minute = "0", second = "0", dayOfMonth = "*", month = "*", year = "*", hour = "0,8,19", dayOfWeek = "*", persistent = false)
+    @Schedule(minute = "0", second = "0", dayOfMonth = "*", month = "*", year = "*", hour = "8,19", dayOfWeek = "*", persistent = false)
     @Override
     public void refreshSpiderUserCookie() {
         System.out.println("timer:refreshSpiderUserCookie----刷新爬虫:UPDATE_OLDEST_SINA_USER:init");

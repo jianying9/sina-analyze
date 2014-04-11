@@ -86,6 +86,7 @@ public class UpdateOldestSinaUserServiceImpl implements Service {
     }
 
     private void spiderRun() {
+        this.operate = "run";
         Task task;
         long pageIndex;
         for (int index = 0; index < 4; index++) {
@@ -113,6 +114,7 @@ public class UpdateOldestSinaUserServiceImpl implements Service {
             System.out.println("停止爬虫任务......");
             this.operate = op;
         } else if (op.equals("init")) {
+            this.operate = op;
             Task task = new InitTaskImpl();
             this.taskExecutor.submit(task);
         } else if (op.equals("check")) {
@@ -145,7 +147,6 @@ public class UpdateOldestSinaUserServiceImpl implements Service {
         @Override
         public void run() {
             String userId;
-            operate = "run";
             System.out.println("开始执行爬虫任务......");
             while (operate.equals("run")) {
                 List<SinaUserEntity> sinaUserEntityList = sinaLocalService.inquireSinaUser(this.pageIndex, 1);
@@ -167,27 +168,32 @@ public class UpdateOldestSinaUserServiceImpl implements Service {
         @Override
         public void run() {
             System.out.println("开始初始化爬虫信息...");
-            operate = "init";
             //刷新cookie
             System.out.println("刷新爬虫帐号的cookie...");
             List<SpiderUserEntity> spiderUserEntityList = spiderLocalService.inquireSpiderUser();
             long thisTime = System.currentTimeMillis();
-            String newCookie;
+            String newCookie = "";
             Map<String, String> updateMap;
+            int times;
             for (SpiderUserEntity spiderUserEntity : spiderUserEntityList) {
-                newCookie = spiderLocalService.getCookieByLogin(spiderUserEntity.getUserName(), spiderUserEntity.getPassword());
-                updateMap = spiderUserEntity.toMap();
-                updateMap.put("cookie", newCookie);
-                updateMap.put("lastUpdateTime", Long.toString(thisTime));
-                spiderLocalService.updateSpiderUser(updateMap);
+                times = 0;
+                while (times < 5 && newCookie.isEmpty()) {
+                    System.out.println("获取cookie次数:" + times);
+                    newCookie = spiderLocalService.getCookieByLogin(spiderUserEntity.getUserName(), spiderUserEntity.getPassword());
+                    times++;
+                }
+                if (newCookie.isEmpty() == false) {
+                    updateMap = spiderUserEntity.toMap();
+                    updateMap.put("cookie", newCookie);
+                    updateMap.put("lastUpdateTime", Long.toString(thisTime));
+                    spiderLocalService.updateSpiderUser(updateMap);
+                }
             }
             //重建http client
             System.out.println("重建爬虫...");
             spiderLocalService.rebuildHttpClientManager();
-            //重新启动任务
-            System.out.println("重新启动爬虫任务...");
+            //结束
             operate = "stop";
-            spiderRun();
         }
     }
 }
