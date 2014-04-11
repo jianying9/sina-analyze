@@ -77,7 +77,6 @@ public class SipderLocalServiceImpl implements SpiderLocalService {
         Header header;
         HttpClientManager hcm = new HttpClientManager();
         List<SpiderUserEntity> spiderUserEntityList = this.inquireSpiderUser();
-        long thisTime = System.currentTimeMillis();
         for (SpiderUserEntity spiderUserEntity : spiderUserEntityList) {
             if (spiderUserEntity.getCookie().isEmpty() == false) {
                 System.out.println("有效的帐号:" + spiderUserEntity.getUserName());
