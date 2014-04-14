@@ -46,10 +46,11 @@ public class SipderLocalServiceImpl implements SpiderLocalService {
     //http client
     private volatile HttpClientManager httpClientManager;
     //登录页面
-    private final String rootUrl = "http://weibo.com/";
-    private final String userNameXpath = "//*[@id=\"pl_login_form\"]/div[5]/div[1]/div/input";
-    private final String passwordXpath = "//*[@id=\"pl_login_form\"]/div[5]/div[2]/div/input";
-    private final String loginBtnXpath = "//*[@id=\"pl_login_form\"]/div[5]/div[6]/div[1]/a";
+    private final String loginUrl = "http://login.sina.com.cn/";
+    private final String weiboUrl = "http://weibo.com/";
+    private final String userNameXpath = "//*[@id=\"username\"]";
+    private final String passwordXpath = "//*[@id=\"password\"]";
+    private final String loginBtnXpath = "//*[@id=\"main_login\"]/div[2]/div[2]/div/form/div/ul/li[7]/a[1]/input";
     //
     private final Pattern filterPattern = Pattern.compile("\\\\t|\\\\n|\\\\r|\\\\");
     //
@@ -132,8 +133,8 @@ public class SipderLocalServiceImpl implements SpiderLocalService {
 //        SeleniumUtils.waitUntilReady(webDriver, 60);
 //        webDriver.manage().deleteAllCookies();
         //刷新
-        System.out.println(userName + ":打开登录页面");
-        webDriver.get(this.rootUrl);
+        System.out.println(userName + ":打开登录页面:" + this.loginUrl);
+        webDriver.get(this.loginUrl);
         SeleniumUtils.waitUntilReady(webDriver, this.userNameXpath, 120);
         System.out.println(userName + ":输入帐号");
         //输入帐号密码
@@ -146,9 +147,14 @@ public class SipderLocalServiceImpl implements SpiderLocalService {
         System.out.println(userName + ":点击登录按钮");
         WebElement loginBtnElement = webDriver.findElement(By.xpath(this.loginBtnXpath));
         loginBtnElement.click();
-        //等待页面跳转
+        //等待登录页面跳转
         System.out.println(userName + ":等待登录成功页面跳转");
-        SeleniumUtils.waitUrlChange(this.rootUrl, webDriver, 120);
+        SeleniumUtils.waitUrlChange(this.loginUrl, webDriver, 120);
+        //跳转到weibo页面
+        System.out.println(userName + ":跳转到weibo页面");
+        webDriver.get(this.weiboUrl);
+        System.out.println(userName + ":等待weibo页面跳转");
+        SeleniumUtils.waitUrlChange(this.weiboUrl, webDriver, 120);
         System.out.println(userName + ":登录成功获取cookie");
         Set<Cookie> allCookies = webDriver.manage().getCookies();
         Map<String, String> loginCookieMap = new HashMap<String, String>(16, 1);
@@ -186,7 +192,7 @@ public class SipderLocalServiceImpl implements SpiderLocalService {
     public InfoEntity getInfo(String userId) {
         InfoEntity infoEntity = null;
         String path = this.replaceIdPattern.matcher(this.infoPath).replaceFirst(userId);
-        String url = this.rootUrl.concat(path);
+        String url = this.weiboUrl.concat(path);
         String response = this.getUrl(url);
         int index = response.lastIndexOf("基本信息");
         if (index > -1) {
@@ -253,7 +259,7 @@ public class SipderLocalServiceImpl implements SpiderLocalService {
     public List<String> getFollow(String userId) {
         Set<String> followSet = new HashSet<String>(64, 1);
         String path = this.replaceIdPattern.matcher(this.followPath).replaceFirst(userId);
-        String url = this.rootUrl.concat(path);
+        String url = this.weiboUrl.concat(path);
         String response;
         String pageUrl;
         int index;
