@@ -31,4 +31,6 @@ public class ActionNames {
     public final static String UPDATE_OLDEST_SINA_USER = "UPDATE_OLDEST_SINA_USER";
     //查询sina的异常信息
     public final static String INQUIRE_SINA_EXCEPTION = "INQUIRE_SINA_EXCEPTION";
+    //查询sina的用户信息
+    public final static String INQUIRE_SINA_USER = "INQUIRE_SINA_USER";
 }

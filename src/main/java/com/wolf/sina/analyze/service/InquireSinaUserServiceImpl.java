@@ -17,7 +17,7 @@ import java.util.Map;
  * @author aladdin
  */
 @ServiceConfig(
-        actionName = ActionNames.INSERT_SINA_USER,
+        actionName = ActionNames.INQUIRE_SINA_USER,
         importantParameter = {
     @InputConfig(name = "userId", typeEnum = TypeEnum.CHAR_32, desc = "sina帐号id")
 },
@@ -25,11 +25,11 @@ import java.util.Map;
         response = true,
         group = ActionGroupNames.SPIDER,
         description = "新增新浪用户")
-public class InsertSinaUserServiceImpl implements Service {
-    
+public class InquireSinaUserServiceImpl implements Service {
+
     @InjectLocalService()
     private SinaLocalService sinaLocalService;
-    
+
     @Override
     public void execute(MessageContext messageContext) {
         String userId = messageContext.getParameter("userId");
@@ -40,7 +40,6 @@ public class InsertSinaUserServiceImpl implements Service {
         insertMap.put("empName", "");
         insertMap.put("location", "");
         insertMap.put("tag", "");
-        insertMap.put("follow", "");
         insertMap.put("lastUpdateTime", "0");
         this.sinaLocalService.insertSinaUser(insertMap);
         messageContext.success();

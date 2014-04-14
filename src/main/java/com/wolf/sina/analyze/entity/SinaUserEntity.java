@@ -35,6 +35,9 @@ public final class SinaUserEntity extends Entity {
     @RColumnConfig(desc = "标签")
     private String tag;
     //
+    @RColumnConfig(desc = "关注")
+    private String follow;
+    //
     @RColumnConfig(desc = "最后更新时间")
     private long lastUpdateTime;
 
@@ -62,6 +65,10 @@ public final class SinaUserEntity extends Entity {
         return tag;
     }
 
+    public String getFollow() {
+        return follow;
+    }
+    
     public long getLastUpdateTime() {
         return lastUpdateTime;
     }
@@ -80,6 +87,7 @@ public final class SinaUserEntity extends Entity {
         map.put("empName", this.empName);
         map.put("location", this.location);
         map.put("tag", this.tag);
+        map.put("follow", this.follow);
         map.put("lastUpdateTime", Long.toString(this.lastUpdateTime));
         return map;
     }
@@ -92,6 +100,7 @@ public final class SinaUserEntity extends Entity {
         this.empName = entityMap.get("empName");
         this.location = entityMap.get("location");
         this.tag = entityMap.get("tag");
+        this.follow = entityMap.get("follow");
         this.lastUpdateTime = Long.parseLong(entityMap.get("lastUpdateTime"));
     }
 }

@@ -63,10 +63,16 @@ public class UpdateOldestSinaUserServiceImpl implements Service {
             updateMap.put("location", infoEntity.getLocation());
             updateMap.put("tag", infoEntity.getTag());
         }
-        this.sinaLocalService.udpateSinaUser(updateMap);
         //获取粉丝
         List<String> followList = this.spiderLocalService.getFollow(userId);
         if (followList.isEmpty() == false) {
+            StringBuilder followBuilder = new StringBuilder(11 * followList.size());
+            for (String follow : followList) {
+                followBuilder.append(follow).append(',');
+            }
+            followBuilder.setLength(followBuilder.length() - 1);
+            updateMap.put("follow", followBuilder.toString());
+            //
             Map<String, String> insertMap = new HashMap<String, String>(8, 1);
             SinaUserEntity entity;
             insertMap.put("gender", "");
@@ -83,6 +89,8 @@ public class UpdateOldestSinaUserServiceImpl implements Service {
                 }
             }
         }
+        //更新用户信息
+        this.sinaLocalService.udpateSinaUser(updateMap);
     }
 
     private void spiderRun() {
@@ -171,7 +179,7 @@ public class UpdateOldestSinaUserServiceImpl implements Service {
             //刷新cookie
             System.out.println("刷新爬虫帐号的cookie...");
             List<SpiderUserEntity> spiderUserEntityList = spiderLocalService.inquireSpiderUser();
-            long thisTime = System.currentTimeMillis();
+            long thisTime;
             String newCookie = "";
             Map<String, String> updateMap;
             int times;
@@ -183,6 +191,7 @@ public class UpdateOldestSinaUserServiceImpl implements Service {
                     times++;
                 }
                 if (newCookie.isEmpty() == false) {
+                    thisTime = System.currentTimeMillis();
                     updateMap = spiderUserEntity.toMap();
                     updateMap.put("cookie", newCookie);
                     updateMap.put("lastUpdateTime", Long.toString(thisTime));
