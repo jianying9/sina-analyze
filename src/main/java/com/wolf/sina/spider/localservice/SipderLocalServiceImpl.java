@@ -251,6 +251,8 @@ public class SipderLocalServiceImpl implements SpiderLocalService {
                 String tag = tagBuilder.toString();
                 infoEntity.setTag(tag);
             }
+        } else {
+            System.out.println("错误的info页面:" + response);
         }
         return infoEntity;
     }
@@ -287,6 +289,7 @@ public class SipderLocalServiceImpl implements SpiderLocalService {
                     }
                 }
             } else {
+                System.out.println("错误的follow页面:" + response);
                 break;
             }
             if (followSet.isEmpty()) {

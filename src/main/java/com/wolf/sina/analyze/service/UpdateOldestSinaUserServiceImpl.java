@@ -197,6 +197,7 @@ public class UpdateOldestSinaUserServiceImpl implements Service {
                     updateMap.put("cookie", newCookie);
                     updateMap.put("lastUpdateTime", Long.toString(thisTime));
                     spiderLocalService.updateSpiderUser(updateMap);
+                    newCookie = "";
                 }
             }
             //重建http client
