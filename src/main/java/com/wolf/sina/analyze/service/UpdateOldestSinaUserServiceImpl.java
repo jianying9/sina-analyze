@@ -90,6 +90,7 @@ public class UpdateOldestSinaUserServiceImpl implements Service {
             }
         }
         //更新用户信息
+        updateMap.put("lastUpdateTime", Long.toString(System.currentTimeMillis()));
         this.sinaLocalService.udpateSinaUser(updateMap);
     }
 
@@ -110,7 +111,7 @@ public class UpdateOldestSinaUserServiceImpl implements Service {
         if (op.equals("test")) {
             //测试
             System.out.println("测试爬虫任务");
-            List<SinaUserEntity> sinaUserEntityList = this.sinaLocalService.inquireSinaUser(1, 10);
+            List<SinaUserEntity> sinaUserEntityList = this.sinaLocalService.inquireSinaUser(1, 2);
             for (SinaUserEntity sinaUserEntity : sinaUserEntityList) {
                 this.updateSinaUser(sinaUserEntity.getUserId());
             }

@@ -33,4 +33,6 @@ public class ActionNames {
     public final static String INQUIRE_SINA_EXCEPTION = "INQUIRE_SINA_EXCEPTION";
     //查询sina的用户信息
     public final static String INQUIRE_SINA_USER = "INQUIRE_SINA_USER";
+    //查询某个sina的用户信息
+    public final static String INQUIRE_SINA_USER_BY_USER_ID = "INQUIRE_SINA_USER_BY_USER_ID";
 }

@@ -61,7 +61,7 @@ public class SipderLocalServiceImpl implements SpiderLocalService {
     private final Pattern infoLablePattern = Pattern.compile("(?:\"label S_txt2\">)([\\w\\W]*?)(?:<)");
     private final Pattern infoTagPattern = Pattern.compile("(?:\"tag\">)([\\w\\W]*?)(?:<)");
     //获取粉丝信息
-    private final String followPath = "${id}/follow?pids=Pl_Official_LeftHisRelation__25&page=${page}&ajaxpagelet=1";
+    private final String followPath = "${id}/follow?ajaxpagelet=1&page=${page}";
     private final Pattern replacePagePattern = Pattern.compile("\\$\\{page\\}");
     private final Pattern followPattern = Pattern.compile("(?:\\&uid=)(\\d*)");
 
@@ -270,7 +270,7 @@ public class SipderLocalServiceImpl implements SpiderLocalService {
         for (int page = 1; page <= 10 && hasNext; page++) {
             pageUrl = this.replacePagePattern.matcher(url).replaceFirst(Integer.toString(page));
             response = this.getUrl(pageUrl);
-            index = response.lastIndexOf("他的关注");
+            index = response.indexOf("pl.content.followTab.index");
             if (index > -1) {
                 followText = response.substring(index);
                 index = followText.indexOf("</script>");
@@ -287,6 +287,9 @@ public class SipderLocalServiceImpl implements SpiderLocalService {
                     }
                 }
             } else {
+                break;
+            }
+            if (followSet.isEmpty()) {
                 break;
             }
         }

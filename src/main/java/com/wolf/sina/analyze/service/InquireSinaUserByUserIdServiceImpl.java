@@ -7,47 +7,44 @@ import com.wolf.framework.service.ServiceConfig;
 import com.wolf.framework.service.parameter.InputConfig;
 import com.wolf.framework.service.parameter.OutputConfig;
 import com.wolf.framework.worker.context.MessageContext;
+import com.wolf.sina.analyze.entity.SinaUserEntity;
 import com.wolf.sina.analyze.localservice.SinaLocalService;
 import com.wolf.sina.config.ActionGroupNames;
 import com.wolf.sina.config.ActionNames;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  *
  * @author aladdin
  */
 @ServiceConfig(
-        actionName = ActionNames.INSERT_SINA_USER,
+        actionName = ActionNames.INQUIRE_SINA_USER_BY_USER_ID,
         importantParameter = {
     @InputConfig(name = "userId", typeEnum = TypeEnum.CHAR_32, desc = "sina帐号id")
 },
         returnParameter = {
-    @OutputConfig(name = "userId", typeEnum = TypeEnum.CHAR_32, desc = "sina帐号id")
+    @OutputConfig(name = "userId", typeEnum = TypeEnum.CHAR_32, desc = "sina帐号id"),
+    @OutputConfig(name = "gender", typeEnum = TypeEnum.CHAR_10, desc = "性别"),
+    @OutputConfig(name = "nickName", typeEnum = TypeEnum.CHAR_10, desc = "昵称"),
+    @OutputConfig(name = "empName", typeEnum = TypeEnum.CHAR_10, desc = "姓名"),
+    @OutputConfig(name = "tag", typeEnum = TypeEnum.CHAR_10, desc = "标签"),
+    @OutputConfig(name = "follow", typeEnum = TypeEnum.CHAR_10, desc = "关注"),
+    @OutputConfig(name = "location", typeEnum = TypeEnum.CHAR_10, desc = "地区"),
+    @OutputConfig(name = "lastUpdateTime", typeEnum = TypeEnum.CHAR_10, desc = "最后更新时间")
 },
         validateSession = false,
         response = true,
         group = ActionGroupNames.SPIDER,
         description = "新增新浪用户")
-public class InsertSinaUserServiceImpl implements Service {
-    
+public class InquireSinaUserByUserIdServiceImpl implements Service {
+
     @InjectLocalService()
     private SinaLocalService sinaLocalService;
-    
+
     @Override
     public void execute(MessageContext messageContext) {
         String userId = messageContext.getParameter("userId");
-        Map<String, String> insertMap = new HashMap<String, String>(8, 1);
-        insertMap.put("userId", userId);
-        insertMap.put("gender", "");
-        insertMap.put("nickName", "");
-        insertMap.put("empName", "");
-        insertMap.put("location", "");
-        insertMap.put("tag", "");
-        insertMap.put("follow", "");
-        insertMap.put("lastUpdateTime", "0");
-        this.sinaLocalService.insertSinaUser(insertMap);
-        messageContext.setMapData(insertMap);
+        SinaUserEntity sinaUserEntity = this.sinaLocalService.inquireSinaUserByUserId(userId);
+        messageContext.setEntityData(sinaUserEntity);
         messageContext.success();
     }
 }
