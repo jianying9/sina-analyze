@@ -35,4 +35,10 @@ public class ActionNames {
     public final static String INQUIRE_SINA_USER = "INQUIRE_SINA_USER";
     //查询某个sina的用户信息
     public final static String INQUIRE_SINA_USER_BY_USER_ID = "INQUIRE_SINA_USER_BY_USER_ID";
+    //查询sina用户性别统计
+    public final static String INQUIRE_GENDER_CUBE = "INQUIRE_GENDER_CUBE";
+    //查询sina用户地区统计
+    public final static String INQUIRE_LOCATION_CUBE = "INQUIRE_LOCATION_CUBE";
+    //查询sina用户标签统计
+    public final static String INQUIRE_TAG_CUBE = "INQUIRE_TAG_CUBE";
 }

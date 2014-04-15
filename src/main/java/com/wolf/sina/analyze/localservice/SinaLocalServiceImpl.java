@@ -22,7 +22,7 @@ import java.util.Map;
         interfaceInfo = SinaLocalService.class,
         description = "sina相关接口")
 public class SinaLocalServiceImpl implements SinaLocalService {
-    
+
     @InjectRDao(clazz = SinaUserEntity.class)
     private REntityDao<SinaUserEntity> sinaUserEntityDao;
     //
@@ -39,7 +39,7 @@ public class SinaLocalServiceImpl implements SinaLocalService {
     private REntityDao<TagCubeEntity> tagCubeEntityDao;
     //
     private final List<CubeHandler> cubeHandlerList = new ArrayList<CubeHandler>();
-    
+
     @Override
     public void init() {
         CubeHandler cubeHandler = new GenderCubeHandlerImpl(this.genderCubeEntityDao);
@@ -51,18 +51,18 @@ public class SinaLocalServiceImpl implements SinaLocalService {
         cubeHandler = new TagCubeHandlerImpl(this.tagCubeEntityDao);
         this.cubeHandlerList.add(cubeHandler);
     }
-    
+
     @Override
     public void insertSinaUser(Map<String, String> insertMap) {
         this.sinaUserEntityDao.setKeySorce(insertMap, -1);
         this.sinaUserEntityDao.insert(insertMap);
     }
-    
+
     @Override
     public void deleteSinaUser(String userId) {
         this.sinaUserEntityDao.delete(userId);
     }
-    
+
     @Override
     public void udpateSinaUser(Map<String, String> updateMap) {
         this.sinaUserEntityDao.setKeySorce(updateMap, System.currentTimeMillis());
@@ -71,12 +71,12 @@ public class SinaLocalServiceImpl implements SinaLocalService {
             cubeHandler.execute(updateMap);
         }
     }
-    
+
     @Override
     public SinaUserEntity inquireSinaUserByUserId(String userId) {
         return this.sinaUserEntityDao.inquireByKey(userId);
     }
-    
+
     @Override
     public List<SinaUserEntity> inquireSinaUser(long pageIndex, long pageSize) {
         InquirePageContext inquirePageContext = new InquirePageContext();
@@ -84,7 +84,7 @@ public class SinaLocalServiceImpl implements SinaLocalService {
         inquirePageContext.setPageIndex(pageIndex);
         return this.sinaUserEntityDao.inquire(inquirePageContext);
     }
-    
+
     @Override
     public List<SinaUserEntity> inquireSinaUserDESC(long pageIndex, long pageSize) {
         InquirePageContext inquirePageContext = new InquirePageContext();
@@ -92,7 +92,7 @@ public class SinaLocalServiceImpl implements SinaLocalService {
         inquirePageContext.setPageIndex(pageIndex);
         return this.sinaUserEntityDao.inquireDESC(inquirePageContext);
     }
-    
+
     @Override
     public void insertSinaException(String userId, String exception) {
         Map<String, String> insertMap = new HashMap<String, String>(4, 1);
@@ -101,12 +101,12 @@ public class SinaLocalServiceImpl implements SinaLocalService {
         insertMap.put("lastUpdateTime", Long.toString(System.currentTimeMillis()));
         this.sinaExceptionEntityDao.insert(insertMap);
     }
-    
+
     @Override
     public void deleteSinaException(String userId) {
         this.sinaExceptionEntityDao.delete(userId);
     }
-    
+
     @Override
     public List<SinaExceptionEntity> inquireSinaException(long pageIndex, long pageSize) {
         InquirePageContext inquirePageContext = new InquirePageContext();
@@ -114,9 +114,32 @@ public class SinaLocalServiceImpl implements SinaLocalService {
         inquirePageContext.setPageIndex(pageIndex);
         return this.sinaExceptionEntityDao.inquire(inquirePageContext);
     }
-    
+
     @Override
     public SinaExceptionEntity inquireSinaExceptionByUserId(String userId) {
         return this.sinaExceptionEntityDao.inquireByKey(userId);
+    }
+
+    @Override
+    public List<GenderCubeEntity> inquireGenderCube() {
+        InquirePageContext inquirePageContext = new InquirePageContext();
+        inquirePageContext.setPageSize(10);
+        return this.genderCubeEntityDao.inquire(inquirePageContext);
+    }
+
+    @Override
+    public List<LocationCubeEntity> inquireLocationCube(long pageIndex, long pageSize) {
+        InquirePageContext inquirePageContext = new InquirePageContext();
+        inquirePageContext.setPageSize(pageSize);
+        inquirePageContext.setPageIndex(pageIndex);
+        return this.locationCubeEntityDao.inquireDESC(inquirePageContext);
+    }
+
+    @Override
+    public List<TagCubeEntity> inquireTagCube(long pageIndex, long pageSize) {
+        InquirePageContext inquirePageContext = new InquirePageContext();
+        inquirePageContext.setPageSize(pageSize);
+        inquirePageContext.setPageIndex(pageIndex);
+        return this.tagCubeEntityDao.inquireDESC(inquirePageContext);
     }
 }

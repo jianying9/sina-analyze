@@ -8,7 +8,7 @@
         "describe": "扫描注解包名集合，例如com.wolf"
     },
     "task.core.pool.size": {
-        "value": "2",
+        "value": "10",
         "describe": "线程空闲存活数量"
     },
     "task.max.pool.size": {

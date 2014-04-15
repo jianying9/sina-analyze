@@ -35,7 +35,7 @@ import java.util.Map;
 },
         validateSession = false,
         response = true,
-        group = ActionGroupNames.SPIDER,
+        group = ActionGroupNames.SINA,
         description = "更新最早的sina用户信息")
 public class UpdateOldestSinaUserServiceImpl implements Service {
 
@@ -111,7 +111,7 @@ public class UpdateOldestSinaUserServiceImpl implements Service {
         if (op.equals("test")) {
             //测试
             System.out.println("测试爬虫任务");
-            List<SinaUserEntity> sinaUserEntityList = this.sinaLocalService.inquireSinaUser(1, 2);
+            List<SinaUserEntity> sinaUserEntityList = this.sinaLocalService.inquireSinaUser(1, 1);
             for (SinaUserEntity sinaUserEntity : sinaUserEntityList) {
                 this.updateSinaUser(sinaUserEntity.getUserId());
             }

@@ -33,7 +33,7 @@ import com.wolf.sina.config.ActionNames;
 },
         validateSession = false,
         response = true,
-        group = ActionGroupNames.SPIDER,
+        group = ActionGroupNames.SINA,
         description = "新增新浪用户")
 public class InquireSinaUserByUserIdServiceImpl implements Service {
 

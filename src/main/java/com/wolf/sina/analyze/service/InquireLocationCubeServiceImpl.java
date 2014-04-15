@@ -6,7 +6,7 @@ import com.wolf.framework.service.Service;
 import com.wolf.framework.service.ServiceConfig;
 import com.wolf.framework.service.parameter.OutputConfig;
 import com.wolf.framework.worker.context.MessageContext;
-import com.wolf.sina.analyze.entity.SinaUserEntity;
+import com.wolf.sina.analyze.entity.LocationCubeEntity;
 import com.wolf.sina.analyze.localservice.SinaLocalService;
 import com.wolf.sina.config.ActionGroupNames;
 import com.wolf.sina.config.ActionNames;
@@ -17,23 +17,17 @@ import java.util.List;
  * @author aladdin
  */
 @ServiceConfig(
-        actionName = ActionNames.INQUIRE_SINA_USER,
+        actionName = ActionNames.INQUIRE_LOCATION_CUBE,
         returnParameter = {
-    @OutputConfig(name = "userId", typeEnum = TypeEnum.CHAR_32, desc = "sina帐号id"),
-    @OutputConfig(name = "gender", typeEnum = TypeEnum.CHAR_10, desc = "性别"),
-    @OutputConfig(name = "nickName", typeEnum = TypeEnum.CHAR_32, desc = "昵称"),
-    @OutputConfig(name = "empName", typeEnum = TypeEnum.CHAR_32, desc = "姓名"),
-    @OutputConfig(name = "tag", typeEnum = TypeEnum.CHAR_4000, desc = "标签"),
-    @OutputConfig(name = "follow", typeEnum = TypeEnum.CHAR_4000, desc = "关注"),
     @OutputConfig(name = "location", typeEnum = TypeEnum.CHAR_10, desc = "地区"),
-    @OutputConfig(name = "lastUpdateTime", typeEnum = TypeEnum.DATE_TIME, desc = "最后更新时间")
+    @OutputConfig(name = "num", typeEnum = TypeEnum.LONG, desc = "数量")
 },
         validateSession = false,
         page = true,
         response = true,
         group = ActionGroupNames.SINA,
-        description = "新增新浪用户")
-public class InquireSinaUserServiceImpl implements Service {
+        description = "查询sina用户地区统计")
+public class InquireLocationCubeServiceImpl implements Service {
 
     @InjectLocalService()
     private SinaLocalService sinaLocalService;
@@ -42,8 +36,8 @@ public class InquireSinaUserServiceImpl implements Service {
     public void execute(MessageContext messageContext) {
         long pageIndex = messageContext.getPageIndex();
         long pageSize = messageContext.getPageSize();
-        List<SinaUserEntity> sinaUserEntityList = this.sinaLocalService.inquireSinaUserDESC(pageIndex, pageSize);
-        messageContext.setEntityListData(sinaUserEntityList);
+        List<LocationCubeEntity> locationCubeEntityList = this.sinaLocalService.inquireLocationCube(pageIndex, pageSize);
+        messageContext.setEntityListData(locationCubeEntityList);
         messageContext.success();
     }
 }

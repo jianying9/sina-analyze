@@ -20,7 +20,7 @@ public class TagCubeHandlerImpl implements CubeHandler {
     public void execute(Map<String, String> updateMap) {
         String tags = updateMap.get("tag");
         if (tags != null && tags.isEmpty() == false) {
-            String[] tagArr = tags.split(" ");
+            String[] tagArr = tags.split(",");
             long sorce;
             for (String tag : tagArr) {
                 if (tag.isEmpty() == false) {

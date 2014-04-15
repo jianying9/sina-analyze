@@ -24,7 +24,8 @@ public class LocationCubeHandlerImpl implements CubeHandler {
             if (index > -1) {
                 location = location.substring(0, index);
             }
-            this.locationCubeEntityDao.increase(location, "num", 1);
+            long sorce = this.locationCubeEntityDao.increase(location, "num", 1);
+            this.locationCubeEntityDao.updateKeySorce(location, sorce);
         }
     }
 }

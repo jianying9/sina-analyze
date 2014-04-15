@@ -27,7 +27,7 @@ import java.util.Map;
 },
         validateSession = false,
         response = true,
-        group = ActionGroupNames.SPIDER,
+        group = ActionGroupNames.SINA,
         description = "新增新浪用户")
 public class InsertSinaUserServiceImpl implements Service {
     
