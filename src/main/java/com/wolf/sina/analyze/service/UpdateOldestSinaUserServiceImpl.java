@@ -176,7 +176,11 @@ public class UpdateOldestSinaUserServiceImpl implements Service {
 
         @Override
         public void run() {
-            System.out.println("开始初始化爬虫信息...");
+            System.out.println("3分钟后开始初始化爬虫信息...");
+            try {
+                Thread.sleep(180000);
+            } catch (InterruptedException ex) {
+            }
             //刷新cookie
             System.out.println("刷新爬虫帐号的cookie...");
             List<SpiderUserEntity> spiderUserEntityList = spiderLocalService.inquireSpiderUser();

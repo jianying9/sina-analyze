@@ -16,6 +16,13 @@ public class SeleniumUtils {
 
     private static String bodyXpath = "/html/body";
 
+    public static void waitTime(long timeOutInSeconds) {
+        try {
+            Thread.sleep(timeOutInSeconds);
+        } catch (InterruptedException ex) {
+        }
+    }
+
     public static void waitUrlChange(String oldUrl, WebDriver webDriver, long timeOutInSeconds) {
         String newUrl = webDriver.getCurrentUrl();
         long times = 0;

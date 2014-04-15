@@ -4,8 +4,12 @@ import com.wolf.framework.dao.REntityDao;
 import com.wolf.framework.dao.annotation.InjectRDao;
 import com.wolf.framework.dao.condition.InquirePageContext;
 import com.wolf.framework.local.LocalServiceConfig;
+import com.wolf.sina.analyze.entity.GenderCubeEntity;
+import com.wolf.sina.analyze.entity.LocationCubeEntity;
 import com.wolf.sina.analyze.entity.SinaExceptionEntity;
 import com.wolf.sina.analyze.entity.SinaUserEntity;
+import com.wolf.sina.analyze.entity.TagCubeEntity;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -18,39 +22,61 @@ import java.util.Map;
         interfaceInfo = SinaLocalService.class,
         description = "sina相关接口")
 public class SinaLocalServiceImpl implements SinaLocalService {
-
+    
     @InjectRDao(clazz = SinaUserEntity.class)
     private REntityDao<SinaUserEntity> sinaUserEntityDao;
     //
     @InjectRDao(clazz = SinaExceptionEntity.class)
     private REntityDao<SinaExceptionEntity> sinaExceptionEntityDao;
-
+    //
+    @InjectRDao(clazz = GenderCubeEntity.class)
+    private REntityDao<GenderCubeEntity> genderCubeEntityDao;
+    //
+    @InjectRDao(clazz = LocationCubeEntity.class)
+    private REntityDao<LocationCubeEntity> locationCubeEntityDao;
+    //
+    @InjectRDao(clazz = TagCubeEntity.class)
+    private REntityDao<TagCubeEntity> tagCubeEntityDao;
+    //
+    private final List<CubeHandler> cubeHandlerList = new ArrayList<CubeHandler>();
+    
     @Override
     public void init() {
+        CubeHandler cubeHandler = new GenderCubeHandlerImpl(this.genderCubeEntityDao);
+        this.cubeHandlerList.add(cubeHandler);
+        //
+        cubeHandler = new LocationCubeHandlerImpl(this.locationCubeEntityDao);
+        this.cubeHandlerList.add(cubeHandler);
+        //
+        cubeHandler = new TagCubeHandlerImpl(this.tagCubeEntityDao);
+        this.cubeHandlerList.add(cubeHandler);
     }
-
+    
     @Override
     public void insertSinaUser(Map<String, String> insertMap) {
         this.sinaUserEntityDao.setKeySorce(insertMap, -1);
         this.sinaUserEntityDao.insert(insertMap);
     }
-
+    
     @Override
     public void deleteSinaUser(String userId) {
         this.sinaUserEntityDao.delete(userId);
     }
-
+    
     @Override
     public void udpateSinaUser(Map<String, String> updateMap) {
         this.sinaUserEntityDao.setKeySorce(updateMap, System.currentTimeMillis());
         this.sinaUserEntityDao.update(updateMap);
+        for (CubeHandler cubeHandler : this.cubeHandlerList) {
+            cubeHandler.execute(updateMap);
+        }
     }
-
+    
     @Override
     public SinaUserEntity inquireSinaUserByUserId(String userId) {
         return this.sinaUserEntityDao.inquireByKey(userId);
     }
-
+    
     @Override
     public List<SinaUserEntity> inquireSinaUser(long pageIndex, long pageSize) {
         InquirePageContext inquirePageContext = new InquirePageContext();
@@ -58,7 +84,7 @@ public class SinaLocalServiceImpl implements SinaLocalService {
         inquirePageContext.setPageIndex(pageIndex);
         return this.sinaUserEntityDao.inquire(inquirePageContext);
     }
-
+    
     @Override
     public List<SinaUserEntity> inquireSinaUserDESC(long pageIndex, long pageSize) {
         InquirePageContext inquirePageContext = new InquirePageContext();
@@ -66,7 +92,7 @@ public class SinaLocalServiceImpl implements SinaLocalService {
         inquirePageContext.setPageIndex(pageIndex);
         return this.sinaUserEntityDao.inquireDESC(inquirePageContext);
     }
-
+    
     @Override
     public void insertSinaException(String userId, String exception) {
         Map<String, String> insertMap = new HashMap<String, String>(4, 1);
@@ -75,12 +101,12 @@ public class SinaLocalServiceImpl implements SinaLocalService {
         insertMap.put("lastUpdateTime", Long.toString(System.currentTimeMillis()));
         this.sinaExceptionEntityDao.insert(insertMap);
     }
-
+    
     @Override
     public void deleteSinaException(String userId) {
         this.sinaExceptionEntityDao.delete(userId);
     }
-
+    
     @Override
     public List<SinaExceptionEntity> inquireSinaException(long pageIndex, long pageSize) {
         InquirePageContext inquirePageContext = new InquirePageContext();
@@ -88,7 +114,7 @@ public class SinaLocalServiceImpl implements SinaLocalService {
         inquirePageContext.setPageIndex(pageIndex);
         return this.sinaExceptionEntityDao.inquire(inquirePageContext);
     }
-
+    
     @Override
     public SinaExceptionEntity inquireSinaExceptionByUserId(String userId) {
         return this.sinaExceptionEntityDao.inquireByKey(userId);

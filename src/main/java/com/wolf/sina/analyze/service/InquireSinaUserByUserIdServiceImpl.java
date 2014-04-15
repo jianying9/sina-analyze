@@ -24,12 +24,12 @@ import com.wolf.sina.config.ActionNames;
         returnParameter = {
     @OutputConfig(name = "userId", typeEnum = TypeEnum.CHAR_32, desc = "sina帐号id"),
     @OutputConfig(name = "gender", typeEnum = TypeEnum.CHAR_10, desc = "性别"),
-    @OutputConfig(name = "nickName", typeEnum = TypeEnum.CHAR_10, desc = "昵称"),
-    @OutputConfig(name = "empName", typeEnum = TypeEnum.CHAR_10, desc = "姓名"),
-    @OutputConfig(name = "tag", typeEnum = TypeEnum.CHAR_10, desc = "标签"),
-    @OutputConfig(name = "follow", typeEnum = TypeEnum.CHAR_10, desc = "关注"),
+    @OutputConfig(name = "nickName", typeEnum = TypeEnum.CHAR_32, desc = "昵称"),
+    @OutputConfig(name = "empName", typeEnum = TypeEnum.CHAR_32, desc = "姓名"),
+    @OutputConfig(name = "tag", typeEnum = TypeEnum.CHAR_4000, desc = "标签"),
+    @OutputConfig(name = "follow", typeEnum = TypeEnum.CHAR_4000, desc = "关注"),
     @OutputConfig(name = "location", typeEnum = TypeEnum.CHAR_10, desc = "地区"),
-    @OutputConfig(name = "lastUpdateTime", typeEnum = TypeEnum.CHAR_10, desc = "最后更新时间")
+    @OutputConfig(name = "lastUpdateTime", typeEnum = TypeEnum.DATE_TIME, desc = "最后更新时间")
 },
         validateSession = false,
         response = true,
