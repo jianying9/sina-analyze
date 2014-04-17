@@ -20,7 +20,8 @@ import java.util.List;
         actionName = ActionNames.INQUIRE_SINA_USER_CUBE,
         returnParameter = {
     @OutputConfig(name = "time", typeEnum = TypeEnum.CHAR_32, desc = "时间"),
-    @OutputConfig(name = "num", typeEnum = TypeEnum.LONG, desc = "数量")
+    @OutputConfig(name = "num", typeEnum = TypeEnum.LONG, desc = "数量"),
+    @OutputConfig(name = "increment", typeEnum = TypeEnum.LONG, desc = "增量")
 },
         validateSession = false,
         page = true,
