@@ -4,6 +4,7 @@ import com.wolf.framework.local.Local;
 import com.wolf.sina.analyze.entity.GenderCubeEntity;
 import com.wolf.sina.analyze.entity.LocationCubeEntity;
 import com.wolf.sina.analyze.entity.SinaExceptionEntity;
+import com.wolf.sina.analyze.entity.SinaUserCubeEntity;
 import com.wolf.sina.analyze.entity.SinaUserEntity;
 import com.wolf.sina.analyze.entity.TagCubeEntity;
 import java.util.List;
@@ -20,6 +21,8 @@ public interface SinaLocalService extends Local {
     public void deleteSinaUser(String userId);
 
     public void udpateSinaUser(Map<String, String> updateMap);
+    
+    public long countSinaUser();
 
     public SinaUserEntity inquireSinaUserByUserId(String userId);
 
@@ -40,4 +43,8 @@ public interface SinaLocalService extends Local {
     public List<LocationCubeEntity> inquireLocationCube(long pageIndex, long pageSize);
     
     public List<TagCubeEntity> inquireTagCube(long pageIndex, long pageSize);
+    
+    public void insertSinaUserCube(Map<String, String> insertMap);
+    
+    public List<SinaUserCubeEntity> inquireSinaUserCube(long pageIndex, long pageSize);
 }

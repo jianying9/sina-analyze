@@ -12,9 +12,9 @@ import org.junit.Test;
  *
  * @author aladdin
  */
-public class InquireLocationCubeServiceImplJUnitTest extends AbstractSinaAnalyzeTest {
+public class InquireSinaUserCubeServiceImplJUnitTest extends AbstractSinaAnalyzeTest {
 
-    public InquireLocationCubeServiceImplJUnitTest() {
+    public InquireSinaUserCubeServiceImplJUnitTest() {
     }
 
     @Before
@@ -30,8 +30,8 @@ public class InquireLocationCubeServiceImplJUnitTest extends AbstractSinaAnalyze
     public void test() {
         Map<String, String> parameterMap = new HashMap<String, String>(2, 1);
         parameterMap.put("pageIndex", "1");
-        parameterMap.put("pageSize", "50");
-        String result = this.testHandler.execute(ActionNames.INQUIRE_LOCATION_CUBE, parameterMap);
+        parameterMap.put("pageSize", "24");
+        String result = this.testHandler.execute(ActionNames.INQUIRE_SINA_USER_CUBE, parameterMap);
         System.out.println(result);
     }
 }

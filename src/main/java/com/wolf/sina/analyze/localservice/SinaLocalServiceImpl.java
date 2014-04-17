@@ -7,6 +7,7 @@ import com.wolf.framework.local.LocalServiceConfig;
 import com.wolf.sina.analyze.entity.GenderCubeEntity;
 import com.wolf.sina.analyze.entity.LocationCubeEntity;
 import com.wolf.sina.analyze.entity.SinaExceptionEntity;
+import com.wolf.sina.analyze.entity.SinaUserCubeEntity;
 import com.wolf.sina.analyze.entity.SinaUserEntity;
 import com.wolf.sina.analyze.entity.TagCubeEntity;
 import java.util.ArrayList;
@@ -37,6 +38,9 @@ public class SinaLocalServiceImpl implements SinaLocalService {
     //
     @InjectRDao(clazz = TagCubeEntity.class)
     private REntityDao<TagCubeEntity> tagCubeEntityDao;
+    //
+    @InjectRDao(clazz = SinaUserCubeEntity.class)
+    private REntityDao<SinaUserCubeEntity> sinaUserCubeEntityDao;
     //
     private final List<CubeHandler> cubeHandlerList = new ArrayList<CubeHandler>();
 
@@ -70,6 +74,11 @@ public class SinaLocalServiceImpl implements SinaLocalService {
         for (CubeHandler cubeHandler : this.cubeHandlerList) {
             cubeHandler.execute(updateMap);
         }
+    }
+
+    @Override
+    public long countSinaUser() {
+        return this.sinaUserEntityDao.count();
     }
 
     @Override
@@ -141,5 +150,18 @@ public class SinaLocalServiceImpl implements SinaLocalService {
         inquirePageContext.setPageSize(pageSize);
         inquirePageContext.setPageIndex(pageIndex);
         return this.tagCubeEntityDao.inquireDESC(inquirePageContext);
+    }
+
+    @Override
+    public void insertSinaUserCube(Map<String, String> insertMap) {
+        this.sinaUserCubeEntityDao.insert(insertMap);
+    }
+
+    @Override
+    public List<SinaUserCubeEntity> inquireSinaUserCube(long pageIndex, long pageSize) {
+        InquirePageContext inquirePageContext = new InquirePageContext();
+        inquirePageContext.setPageSize(pageSize);
+        inquirePageContext.setPageIndex(pageIndex);
+        return this.sinaUserCubeEntityDao.inquireDESC(inquirePageContext);
     }
 }

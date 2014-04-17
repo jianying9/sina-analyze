@@ -20,4 +20,6 @@ public class TableNames {
     public final static String LOCATION_CUBE = "LOCATION_CUBE";
     //tag统计
     public final static String TAG_CUBE = "TAG_CUBE";
+    //用户数量统计
+    public final static String SINA_USER_CUBE = "SINA_USER_CUBE";
 }

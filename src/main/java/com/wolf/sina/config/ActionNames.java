@@ -41,4 +41,8 @@ public class ActionNames {
     public final static String INQUIRE_LOCATION_CUBE = "INQUIRE_LOCATION_CUBE";
     //查询sina用户标签统计
     public final static String INQUIRE_TAG_CUBE = "INQUIRE_TAG_CUBE";
+    //timer:每小时保存该时间点用户的总数
+    public final static String TIMER_SAVE_SINA_USER_NUM = "TIMER_SAVE_SINA_USER_NUM";
+    //查询sina用户数统计
+    public final static String INQUIRE_SINA_USER_CUBE = "INQUIRE_SINA_USER_CUBE";
 }

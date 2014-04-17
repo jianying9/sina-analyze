@@ -12,4 +12,6 @@ public interface SinaTimerSessionBeanLocal {
     public void refreshSpiderUserCookie();
     
     public void checkUpdateSinaUserTask();
+    
+    public void saveSinaUserNumPerHour();
 }
