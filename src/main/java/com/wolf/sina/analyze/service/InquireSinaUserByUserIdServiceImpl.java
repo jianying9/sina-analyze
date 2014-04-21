@@ -8,9 +8,11 @@ import com.wolf.framework.service.parameter.InputConfig;
 import com.wolf.framework.service.parameter.OutputConfig;
 import com.wolf.framework.worker.context.MessageContext;
 import com.wolf.sina.analyze.entity.SinaUserEntity;
+import com.wolf.sina.analyze.entity.SinaUserInfoEntity;
 import com.wolf.sina.analyze.localservice.SinaLocalService;
 import com.wolf.sina.config.ActionGroupNames;
 import com.wolf.sina.config.ActionNames;
+import java.util.Map;
 
 /**
  *
@@ -44,7 +46,21 @@ public class InquireSinaUserByUserIdServiceImpl implements Service {
     public void execute(MessageContext messageContext) {
         String userId = messageContext.getParameter("userId");
         SinaUserEntity sinaUserEntity = this.sinaLocalService.inquireSinaUserByUserId(userId);
-        messageContext.setEntityData(sinaUserEntity);
+        if (sinaUserEntity != null) {
+            SinaUserInfoEntity sinaUserInfoEntity = this.sinaLocalService.inquireSinaUserInfoByUserId(userId);
+            if (sinaUserInfoEntity != null) {
+                messageContext.setEntityData(sinaUserEntity);
+            } else {
+                Map<String, String> resultMap = sinaUserEntity.toMap();
+                resultMap.put("gender", "");
+                resultMap.put("nickName", "");
+                resultMap.put("empName", "");
+                resultMap.put("tag", "");
+                resultMap.put("follow", "");
+                resultMap.put("location", "");
+                messageContext.setMapData(resultMap);
+            }
+        }
         messageContext.success();
     }
 }

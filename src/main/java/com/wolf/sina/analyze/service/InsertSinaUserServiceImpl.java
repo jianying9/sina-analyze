@@ -39,12 +39,12 @@ public class InsertSinaUserServiceImpl implements Service {
         String userId = messageContext.getParameter("userId");
         Map<String, String> insertMap = new HashMap<String, String>(8, 1);
         insertMap.put("userId", userId);
-        insertMap.put("gender", "");
-        insertMap.put("nickName", "");
-        insertMap.put("empName", "");
-        insertMap.put("location", "");
-        insertMap.put("tag", "");
-        insertMap.put("follow", "");
+//        insertMap.put("gender", "");
+//        insertMap.put("nickName", "");
+//        insertMap.put("empName", "");
+//        insertMap.put("location", "");
+//        insertMap.put("tag", "");
+//        insertMap.put("follow", "");
         insertMap.put("lastUpdateTime", "0");
         this.sinaLocalService.insertSinaUser(insertMap);
         messageContext.setMapData(insertMap);

@@ -75,11 +75,6 @@ public class UpdateOldestSinaUserServiceImpl implements Service {
             //
             Map<String, String> insertMap = new HashMap<String, String>(8, 1);
             SinaUserEntity entity;
-            insertMap.put("gender", "");
-            insertMap.put("nickName", "");
-            insertMap.put("empName", "");
-            insertMap.put("location", "");
-            insertMap.put("tag", "");
             insertMap.put("lastUpdateTime", "0");
             for (String uid : followList) {
                 entity = this.sinaLocalService.inquireSinaUserByUserId(uid);
@@ -111,9 +106,9 @@ public class UpdateOldestSinaUserServiceImpl implements Service {
         if (op.equals("test")) {
             //测试
             System.out.println("测试爬虫任务");
-            List<SinaUserEntity> sinaUserEntityList = this.sinaLocalService.inquireSinaUser(1, 1);
-            for (SinaUserEntity sinaUserEntity : sinaUserEntityList) {
-                this.updateSinaUser(sinaUserEntity.getUserId());
+            List<String> sinaUserIdList = this.sinaLocalService.inquireSinaUserId(1, 1);
+            for (String userId : sinaUserIdList) {
+                this.updateSinaUser(userId);
             }
         } else if (op.equals("run")) {
             //执行
@@ -158,9 +153,9 @@ public class UpdateOldestSinaUserServiceImpl implements Service {
             String userId;
             System.out.println("开始执行爬虫任务......");
             while (operate.equals("run")) {
-                List<SinaUserEntity> sinaUserEntityList = sinaLocalService.inquireSinaUser(this.pageIndex, 1);
-                if (sinaUserEntityList.isEmpty() == false) {
-                    userId = sinaUserEntityList.get(0).getUserId();
+                List<String> sinaUserIdList = sinaLocalService.inquireSinaUserId(this.pageIndex, 1);
+                if (sinaUserIdList.isEmpty() == false) {
+                    userId = sinaUserIdList.get(0);
                     updateSinaUser(userId);
                 }
             }

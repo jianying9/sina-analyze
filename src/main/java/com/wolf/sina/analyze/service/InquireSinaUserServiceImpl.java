@@ -7,6 +7,7 @@ import com.wolf.framework.service.ServiceConfig;
 import com.wolf.framework.service.parameter.OutputConfig;
 import com.wolf.framework.worker.context.MessageContext;
 import com.wolf.sina.analyze.entity.SinaUserEntity;
+import com.wolf.sina.analyze.entity.SinaUserInfoEntity;
 import com.wolf.sina.analyze.localservice.SinaLocalService;
 import com.wolf.sina.config.ActionGroupNames;
 import com.wolf.sina.config.ActionNames;
@@ -41,7 +42,7 @@ public class InquireSinaUserServiceImpl implements Service {
     public void execute(MessageContext messageContext) {
         long pageIndex = messageContext.getPageIndex();
         long pageSize = messageContext.getPageSize();
-        List<SinaUserEntity> sinaUserEntityList = this.sinaLocalService.inquireSinaUserDESC(pageIndex, pageSize);
+        List<SinaUserInfoEntity> sinaUserEntityList = this.sinaLocalService.inquireSinaUserDESC(pageIndex, pageSize);
         messageContext.setEntityListData(sinaUserEntityList);
         messageContext.success();
     }
