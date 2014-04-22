@@ -6,7 +6,6 @@ import com.wolf.framework.service.Service;
 import com.wolf.framework.service.ServiceConfig;
 import com.wolf.framework.service.parameter.OutputConfig;
 import com.wolf.framework.worker.context.MessageContext;
-import com.wolf.sina.analyze.entity.SinaUserEntity;
 import com.wolf.sina.analyze.entity.SinaUserInfoEntity;
 import com.wolf.sina.analyze.localservice.SinaLocalService;
 import com.wolf.sina.config.ActionGroupNames;
