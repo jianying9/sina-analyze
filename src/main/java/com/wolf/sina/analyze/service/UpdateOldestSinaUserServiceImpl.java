@@ -135,7 +135,7 @@ public class UpdateOldestSinaUserServiceImpl implements Service {
     /**
      * 执行任务
      */
-    private class RunTaskImpl implements Task {
+    private class RunTaskImpl extends Task {
 
         private final long pageIndex;
 
@@ -149,7 +149,7 @@ public class UpdateOldestSinaUserServiceImpl implements Service {
         }
 
         @Override
-        public void run() {
+        protected void execute() {
             String userId;
             System.out.println("开始执行爬虫任务......");
             while (operate.equals("run")) {
@@ -162,7 +162,7 @@ public class UpdateOldestSinaUserServiceImpl implements Service {
         }
     }
 
-    private class InitTaskImpl implements Task {
+    private class InitTaskImpl extends Task {
 
         @Override
         public void doWhenRejected() {
@@ -170,7 +170,7 @@ public class UpdateOldestSinaUserServiceImpl implements Service {
         }
 
         @Override
-        public void run() {
+        protected void execute() {
             System.out.println("3分钟后开始初始化爬虫信息...");
             try {
                 Thread.sleep(180000);
