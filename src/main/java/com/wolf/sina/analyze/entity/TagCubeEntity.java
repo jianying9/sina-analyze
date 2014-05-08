@@ -14,7 +14,8 @@ import java.util.Map;
  * @author aladdin
  */
 @RDaoConfig(
-        tableName = TableNames.TAG_CUBE)
+        tableName = TableNames.S_TAG_CUBE,
+        dbIndex = TableNames.S_TAG_CUBE_INDEX)
 public final class TagCubeEntity extends Entity {
 
     @RColumnConfig(columnTypeEnum = ColumnTypeEnum.KEY, desc = "标签")

@@ -14,7 +14,8 @@ import java.util.Map;
  * @author aladdin
  */
 @RDaoConfig(
-        tableName = TableNames.LOCATION_CUBE)
+        tableName = TableNames.S_LOCATION_CUBE,
+        dbIndex = TableNames.S_LOCATION_CUBE_INDEX)
 public final class LocationCubeEntity extends Entity {
 
     @RColumnConfig(columnTypeEnum = ColumnTypeEnum.KEY, desc = "地区")

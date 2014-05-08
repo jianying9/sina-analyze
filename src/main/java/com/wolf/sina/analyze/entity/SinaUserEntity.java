@@ -14,7 +14,8 @@ import java.util.Map;
  * @author aladdin
  */
 @RDaoConfig(
-        tableName = TableNames.SINA_USER)
+        tableName = TableNames.S_SINA_USER,
+        dbIndex = TableNames.S_SINA_USER_INDEX)
 public final class SinaUserEntity extends Entity {
 
     @RColumnConfig(columnTypeEnum = ColumnTypeEnum.KEY, desc = "sina用户id")

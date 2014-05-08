@@ -14,7 +14,8 @@ import java.util.Map;
  * @author aladdin
  */
 @RDaoConfig(
-        tableName = TableNames.SINA_USER_CUBE)
+        tableName = TableNames.S_SINA_USER_CUBE,
+        dbIndex = TableNames.S_SINA_USER_CUBE_INDEX)
 public final class SinaUserCubeEntity extends Entity {
 
     @RColumnConfig(columnTypeEnum = ColumnTypeEnum.KEY, desc = "时间")

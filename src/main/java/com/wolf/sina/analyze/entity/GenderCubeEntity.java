@@ -14,7 +14,8 @@ import java.util.Map;
  * @author aladdin
  */
 @RDaoConfig(
-        tableName = TableNames.GENDER_CUBE)
+        tableName = TableNames.S_GENDER_CUBE,
+        dbIndex = TableNames.S_GENDER_CUBE_INDEX)
 public final class GenderCubeEntity extends Entity {
 
     @RColumnConfig(columnTypeEnum = ColumnTypeEnum.KEY, desc = "性别")
