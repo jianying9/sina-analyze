@@ -10,7 +10,6 @@ import com.wolf.framework.task.InjectTaskExecutor;
 import com.wolf.framework.task.Task;
 import com.wolf.framework.task.TaskExecutor;
 import com.wolf.framework.worker.context.MessageContext;
-import com.wolf.sina.analyze.entity.SinaUserEntity;
 import com.wolf.sina.analyze.localservice.SinaLocalService;
 import com.wolf.sina.config.ActionGroupNames;
 import com.wolf.sina.config.ActionNames;
@@ -73,11 +72,11 @@ public class UpdateOldestSinaUserServiceImpl implements Service {
                 updateMap.put("follow", followBuilder.toString());
                 //
                 Map<String, String> insertMap = new HashMap<String, String>(8, 1);
-                SinaUserEntity entity;
+                boolean sinaUserExist;
                 insertMap.put("lastUpdateTime", "0");
                 for (String uid : followList) {
-                    entity = this.sinaLocalService.inquireSinaUserByUserId(uid);
-                    if (entity == null) {
+                    sinaUserExist = this.sinaLocalService.existSinaUser(uid);
+                    if (sinaUserExist == false) {
                         insertMap.put("userId", uid);
                         this.sinaLocalService.insertSinaUser(insertMap);
                     }
@@ -171,11 +170,11 @@ public class UpdateOldestSinaUserServiceImpl implements Service {
 
         @Override
         protected void execute() {
-            System.out.println("3分钟后开始初始化爬虫信息...");
-//            try {
-//                Thread.sleep(180000);
-//            } catch (InterruptedException ex) {
-//            }
+            System.out.println("1分钟后开始初始化爬虫信息...");
+            try {
+                Thread.sleep(60000);
+            } catch (InterruptedException ex) {
+            }
             //刷新cookie
             System.out.println("刷新爬虫帐号的cookie...");
             List<SpiderUserEntity> spiderUserEntityList = spiderLocalService.inquireSpiderUser();

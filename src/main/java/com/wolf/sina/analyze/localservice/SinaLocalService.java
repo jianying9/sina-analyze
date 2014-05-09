@@ -15,6 +15,8 @@ import java.util.Map;
  * @author aladdin
  */
 public interface SinaLocalService extends Local {
+    
+    public boolean existSinaUser(String userId);
 
     public void insertSinaUser(Map<String, String> insertMap);
 

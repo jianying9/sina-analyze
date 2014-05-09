@@ -82,11 +82,34 @@ public final class SinaUserInfoEntity extends Entity {
     public void parseMap(Map<String, String> entityMap) {
         this.userId = entityMap.get("userId");
         this.gender = entityMap.get("gender");
+        if (this.gender == null) {
+            this.gender = "";
+        }
         this.nickName = entityMap.get("nickName");
+        if (this.nickName == null) {
+            this.nickName = "";
+        }
         this.empName = entityMap.get("empName");
+        if (this.empName == null) {
+            this.empName = "";
+        }
         this.location = entityMap.get("location");
+        if (this.location == null) {
+            this.location = "";
+        }
         this.tag = entityMap.get("tag");
+        if (this.tag == null) {
+            this.tag = "";
+        }
         this.follow = entityMap.get("follow");
-        this.lastUpdateTime = Long.parseLong(entityMap.get("lastUpdateTime"));
+        if (this.follow == null) {
+            this.follow = "";
+        }
+        String time = entityMap.get("lastUpdateTime");
+        if (time == null) {
+            this.lastUpdateTime = System.currentTimeMillis();
+        } else {
+            this.lastUpdateTime = Long.parseLong(time);
+        }
     }
 }

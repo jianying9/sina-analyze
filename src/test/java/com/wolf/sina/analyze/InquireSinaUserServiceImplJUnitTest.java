@@ -29,6 +29,7 @@ public class InquireSinaUserServiceImplJUnitTest extends AbstractSinaAnalyzeTest
     @Test
     public void test() {
         Map<String, String> parameterMap = new HashMap<String, String>(2, 1);
+        parameterMap.put("pageSize", "10");
         String result = this.testHandler.execute(ActionNames.INQUIRE_SINA_USER, parameterMap);
         System.out.println(result);
     }

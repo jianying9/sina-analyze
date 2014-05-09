@@ -78,6 +78,11 @@ public class SinaLocalServiceImpl implements SinaLocalService {
     }
 
     @Override
+    public boolean existSinaUser(String userId) {
+        return this.sinaUserEntityDao.exist(userId);
+    }
+
+    @Override
     public void insertSinaUser(Map<String, String> insertMap) {
         this.sinaUserEntityDao.setKeySorce(insertMap, -1);
         this.sinaUserEntityDao.insert(insertMap);

@@ -143,6 +143,9 @@ public class UpdateJUnitTest {
         JedisPool jedisPool = new JedisPool(poolConfig, "192.168.235.234", 6379);
         Jedis jedis = jedisPool.getResource();
         String text = jedis.get("ssssssss");
+        Double d = jedis.zscore("KEY_S_SINA_USER", "1");
+        jedis.select(TableNames.S_SINA_USER_INDEX);
+        Map<String, String> map = jedis.hgetAll("1");
         System.out.println(text);
         jedis.close();
     }
