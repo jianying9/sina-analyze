@@ -35,7 +35,7 @@ public interface SinaLocalService extends Local {
     public List<SinaUserInfoEntity> inquireSinaUser(long pageIndex, long pageSize);
     
     public List<String> inquireSinaUserIdDESC(long pageIndex, long pageSize);
-
+    
     public List<SinaUserInfoEntity> inquireSinaUserDESC(long pageIndex, long pageSize);
 
     public List<GenderCubeEntity> inquireGenderCube();
@@ -48,9 +48,13 @@ public interface SinaLocalService extends Local {
     
     public List<SinaUserCubeEntity> inquireSinaUserCube(long pageIndex, long pageSize);
     
-    public void saveToFile(Map<String, String> entityMap);
+    public void saveSinaUserInfo(Map<String, String> entityMap);
     
-    public Map<String, String> readFormFile(String userId);
+    public Map<String, String> getSinaUserInfo(String userId);
     
-    public void deleteFile(String userId);
+    public void deleteSinaUserInfo(String userId);
+    
+    public boolean existSinaUserException(String userId);
+    
+    public void insertSinaUserException(String userId);
 }

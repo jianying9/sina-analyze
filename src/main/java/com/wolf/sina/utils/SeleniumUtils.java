@@ -26,7 +26,7 @@ public class SeleniumUtils {
     public static void waitUrlChange(String oldUrl, WebDriver webDriver, long timeOutInSeconds) {
         String newUrl = webDriver.getCurrentUrl();
         long times = 0;
-        while (newUrl.equals(oldUrl) && times < 60) {
+        while (newUrl.equals(oldUrl) && times < 10) {
             try {
                 Thread.sleep(2000);
             } catch (InterruptedException ex) {

@@ -1,5 +1,6 @@
 package com.wolf.sina.analyze;
 
+import com.wolf.framework.worker.context.Response;
 import com.wolf.sina.AbstractSinaAnalyzeTest;
 import com.wolf.sina.config.ActionNames;
 import java.util.HashMap;
@@ -30,7 +31,7 @@ public class UpdateOldestSinaUserServiceImplJUnitTest extends AbstractSinaAnalyz
     public void test() {
         Map<String, String> parameterMap = new HashMap<String, String>(2, 1);
         parameterMap.put("operate", "test");
-        String result = this.testHandler.execute(ActionNames.UPDATE_OLDEST_SINA_USER, parameterMap);
-        System.out.println(result);
+        Response response = this.testHandler.execute(ActionNames.UPDATE_OLDEST_SINA_USER, parameterMap);
+        System.out.println(response.getResponseMessage());
     }
 }

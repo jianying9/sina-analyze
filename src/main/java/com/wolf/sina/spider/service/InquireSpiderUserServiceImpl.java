@@ -4,7 +4,7 @@ import com.wolf.framework.data.TypeEnum;
 import com.wolf.framework.local.InjectLocalService;
 import com.wolf.framework.service.Service;
 import com.wolf.framework.service.ServiceConfig;
-import com.wolf.framework.service.parameter.OutputConfig;
+import com.wolf.framework.service.parameter.ResponseConfig;
 import com.wolf.framework.worker.context.MessageContext;
 import com.wolf.sina.config.ActionGroupNames;
 import com.wolf.sina.config.ActionNames;
@@ -18,11 +18,11 @@ import java.util.List;
  */
 @ServiceConfig(
         actionName = ActionNames.INQUIRE_SPIDER_USER,
-        returnParameter = {
-    @OutputConfig(name = "userName", typeEnum = TypeEnum.CHAR_32, desc = "爬虫帐号", filterTypes = {}),
-    @OutputConfig(name = "password", typeEnum = TypeEnum.CHAR_32, desc = "密码", filterTypes = {}),
-    @OutputConfig(name = "cookie", typeEnum = TypeEnum.CHAR_4000, desc = "cookie", filterTypes = {}),
-    @OutputConfig(name = "lastUpdateTime", typeEnum = TypeEnum.DATE_TIME, desc = "最后更新时间", filterTypes = {})
+        responseConfigs = {
+    @ResponseConfig(name = "userName", typeEnum = TypeEnum.CHAR_32, desc = "爬虫帐号", filterTypes = {}),
+    @ResponseConfig(name = "password", typeEnum = TypeEnum.CHAR_32, desc = "密码", filterTypes = {}),
+    @ResponseConfig(name = "cookie", typeEnum = TypeEnum.CHAR_4000, desc = "cookie", filterTypes = {}),
+    @ResponseConfig(name = "lastUpdateTime", typeEnum = TypeEnum.DATE_TIME, desc = "最后更新时间", filterTypes = {})
 },
         validateSession = false,
         page = true,

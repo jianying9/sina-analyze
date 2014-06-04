@@ -1,5 +1,6 @@
 package com.wolf.sina.spider;
 
+import com.wolf.framework.worker.context.Response;
 import com.wolf.sina.AbstractSinaAnalyzeTest;
 import com.wolf.sina.config.ActionNames;
 import java.util.HashMap;
@@ -30,7 +31,7 @@ public class DeleteSpiderUserServiceImplJUnitTest extends AbstractSinaAnalyzeTes
     public void test() {
         Map<String, String> parameterMap = new HashMap<String, String>(2, 1);
         parameterMap.put("userName", "sina_20140007@163.com");
-        String result = this.testHandler.execute(ActionNames.DELETE_SPIDER_USER, parameterMap);
-        System.out.println(result);
+        Response response = this.testHandler.execute(ActionNames.DELETE_SPIDER_USER, parameterMap);
+        System.out.println(response.getResponseMessage());
     }
 }

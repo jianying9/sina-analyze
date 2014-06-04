@@ -1,28 +1,31 @@
 package com.wolf.sina.analyze.localservice;
 
-import com.wolf.framework.context.ApplicationContext;
 import com.wolf.framework.dao.REntityDao;
 import com.wolf.framework.dao.annotation.InjectRDao;
 import com.wolf.framework.dao.condition.InquirePageContext;
 import com.wolf.framework.local.LocalServiceConfig;
-import com.wolf.framework.utils.StringUtils;
+import com.wolf.framework.utils.SecurityUtils;
 import com.wolf.sina.analyze.entity.GenderCubeEntity;
 import com.wolf.sina.analyze.entity.LocationCubeEntity;
 import com.wolf.sina.analyze.entity.SinaUserCubeEntity;
 import com.wolf.sina.analyze.entity.SinaUserEntity;
+import com.wolf.sina.analyze.entity.SinaUserExceptionEntity;
 import com.wolf.sina.analyze.entity.SinaUserInfoEntity;
 import com.wolf.sina.analyze.entity.TagCubeEntity;
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
-import org.apache.commons.io.FileUtils;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.hbase.HBaseConfiguration;
+import org.apache.hadoop.hbase.client.Delete;
+import org.apache.hadoop.hbase.client.Get;
+import org.apache.hadoop.hbase.client.HTableInterface;
+import org.apache.hadoop.hbase.client.HTablePool;
+import org.apache.hadoop.hbase.client.Put;
+import org.apache.hadoop.hbase.client.Result;
+import org.apache.hadoop.hbase.util.Bytes;
 
 /**
  *
@@ -35,6 +38,9 @@ public class SinaLocalServiceImpl implements SinaLocalService {
 
     @InjectRDao(clazz = SinaUserEntity.class)
     private REntityDao<SinaUserEntity> sinaUserEntityDao;
+    //
+    @InjectRDao(clazz = SinaUserExceptionEntity.class)
+    private REntityDao<SinaUserExceptionEntity> sinaUserExceptionEntityDao;
     //
     @InjectRDao(clazz = GenderCubeEntity.class)
     private REntityDao<GenderCubeEntity> genderCubeEntityDao;
@@ -50,7 +56,9 @@ public class SinaLocalServiceImpl implements SinaLocalService {
     //
     private final List<CubeHandler> updateCubeHandlerList = new ArrayList<CubeHandler>();
     private CubeHandler sinaUserCubeHandler;
-    private String sinaUserInfoFilePath;
+    //
+    private final String hTableName = "SinaUserInfo";
+    private HTablePool hTablePool;
 
     @Override
     public void init() {
@@ -64,17 +72,9 @@ public class SinaLocalServiceImpl implements SinaLocalService {
         this.updateCubeHandlerList.add(cubeHandler);
         //
         this.sinaUserCubeHandler = new SinaUserCubeHandlerImpl(this.sinaUserCubeEntityDao);
-        //获取文件存储路径
-        String rootFilePath = ApplicationContext.CONTEXT.getParameter("file.path");
-        if (rootFilePath == null) {
-            rootFilePath = "/data";
-        }
-        this.sinaUserInfoFilePath = rootFilePath.concat("/sina-user-info/");
-        //检测文件夹是否存在
-        File file = new File(this.sinaUserInfoFilePath);
-        if (file.exists() == false) {
-            file.mkdir();
-        }
+        //init hbase
+        Configuration config = HBaseConfiguration.create();
+        this.hTablePool = new HTablePool(config, 10);
     }
 
     @Override
@@ -92,7 +92,7 @@ public class SinaLocalServiceImpl implements SinaLocalService {
     @Override
     public void deleteSinaUser(String userId) {
         this.sinaUserEntityDao.delete(userId);
-        this.deleteFile(userId);
+        this.deleteSinaUserInfo(userId);
     }
 
     @Override
@@ -103,7 +103,7 @@ public class SinaLocalServiceImpl implements SinaLocalService {
             cubeHandler.execute(updateMap);
         }
         //保存到文件
-        this.saveToFile(updateMap);
+        this.saveSinaUserInfo(updateMap);
     }
 
     @Override
@@ -119,7 +119,7 @@ public class SinaLocalServiceImpl implements SinaLocalService {
     @Override
     public SinaUserInfoEntity inquireSinaUserInfoByUserId(String userId) {
         SinaUserInfoEntity sinaUserInfoEntity = null;
-        Map<String, String> entityMap = this.readFormFile(userId);
+        Map<String, String> entityMap = this.getSinaUserInfo(userId);
         if (entityMap != null) {
             sinaUserInfoEntity = new SinaUserInfoEntity();
             sinaUserInfoEntity.parseMap(entityMap);
@@ -207,61 +207,100 @@ public class SinaLocalServiceImpl implements SinaLocalService {
         return this.sinaUserCubeEntityDao.inquireDESC(inquirePageContext);
     }
 
+    private String createRowKey(String userId) {
+        String prefix = SecurityUtils.encryptByMd5(userId);
+        prefix = prefix.toLowerCase().substring(0, 4);
+        StringBuilder rowKeyBuilder = new StringBuilder(20);
+        rowKeyBuilder.append(prefix).append('_').append(userId);
+        return rowKeyBuilder.toString();
+    }
+
     @Override
-    public void saveToFile(Map<String, String> entityMap) {
+    public void saveSinaUserInfo(Map<String, String> entityMap) {
         String userId = entityMap.get("userId");
         if (userId != null) {
-            String userFilePath = this.sinaUserInfoFilePath.concat(userId);
-            File file = new File(userFilePath);
-            if (file.exists()) {
-                file.delete();
+            String[] fileds = {"gender", "nickName", "empName", "location", "tag", "follow", "lastUpdateTime"};
+            String fieldValue;
+            String rowKey = this.createRowKey(userId);
+            Put put = new Put(Bytes.toBytes(rowKey));
+            byte[] columnFamily = Bytes.toBytes("INFO");
+            for (String filed : fileds) {
+                fieldValue = entityMap.get(filed);
+                if (fieldValue != null) {
+                    put.add(columnFamily, Bytes.toBytes(filed), Bytes.toBytes(fieldValue));
+                }
             }
-            ObjectMapper mapper = new ObjectMapper();
+            HTableInterface hTableInterface = this.hTablePool.getTable(this.hTableName);
             try {
-                String json = mapper.writeValueAsString(entityMap);
-                FileUtils.writeStringToFile(file, json);
+                hTableInterface.put(put);
             } catch (IOException ex) {
-                System.err.println(ex.getMessage());
+            } finally {
+                try {
+                    hTableInterface.close();
+                } catch (IOException ex) {
+                }
             }
         }
     }
 
     @Override
-    public Map<String, String> readFormFile(String userId) {
+    public Map<String, String> getSinaUserInfo(String userId) {
         Map<String, String> resultMap = null;
-        String userFilePath = this.sinaUserInfoFilePath.concat(userId);
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode rootNode = null;
+        String rowKey = this.createRowKey(userId);
+        Get get = new Get(Bytes.toBytes(rowKey));
+        HTableInterface hTableInterface = this.hTablePool.getTable(this.hTableName);
         try {
-            String json = FileUtils.readFileToString(new File(userFilePath));
-            rootNode = mapper.readValue(json, JsonNode.class);
+            Result result = hTableInterface.get(get);
+            if (result != null) {
+                resultMap = new HashMap<String, String>(result.size() + 1, 1);
+                resultMap.put("userId", userId);
+                String[] fileds = {"gender", "nickName", "empName", "location", "tag", "follow", "lastUpdateTime"};
+                byte[] fieldValue;
+                byte[] columnFamily = Bytes.toBytes("INFO");
+                for (String field : fileds) {
+                    fieldValue = result.getValue(columnFamily, Bytes.toBytes(field));
+                    if (fieldValue == null) {
+                        resultMap.put(field, "");
+                    } else {
+                        resultMap.put(field, Bytes.toString(fieldValue));
+                    }
+                }
+            }
         } catch (IOException ex) {
-            System.err.println(ex.getMessage());
-        }
-        if (rootNode != null) {
-            //读数据
-            Entry<String, JsonNode> entry;
-            String name;
-            String value;
-            resultMap = new HashMap<String, String>(rootNode.size(), 1);
-            Iterator<Entry<String, JsonNode>> iterator = rootNode.getFields();
-            while (iterator.hasNext()) {
-                entry = iterator.next();
-                name = entry.getKey();
-                value = entry.getValue().getTextValue();
-                value = StringUtils.trim(value);
-                resultMap.put(name, value);
+        } finally {
+            try {
+                hTableInterface.close();
+            } catch (IOException ex) {
             }
         }
         return resultMap;
     }
 
     @Override
-    public void deleteFile(String userId) {
-        String userFilePath = this.sinaUserInfoFilePath.concat(userId);
-        File file = new File(userFilePath);
-        if (file.exists()) {
-            file.delete();
+    public void deleteSinaUserInfo(String userId) {
+        String rowKey = this.createRowKey(userId);
+        Delete delete = new Delete(Bytes.toBytes(rowKey));
+        HTableInterface hTableInterface = this.hTablePool.getTable(this.hTableName);
+        try {
+            hTableInterface.delete(delete);
+        } catch (IOException ex) {
+        } finally {
+            try {
+                hTableInterface.close();
+            } catch (IOException ex) {
+            }
         }
+    }
+
+    @Override
+    public boolean existSinaUserException(String userId) {
+        return this.sinaUserExceptionEntityDao.exist(userId);
+    }
+
+    @Override
+    public void insertSinaUserException(String userId) {
+        Map<String, String> entityMap = new HashMap<String, String>(2, 1);
+        entityMap.put("userId", userId);
+        this.sinaUserExceptionEntityDao.insert(entityMap);
     }
 }

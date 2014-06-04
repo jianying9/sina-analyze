@@ -1,5 +1,6 @@
 package com.wolf.sina.spider;
 
+import com.wolf.framework.worker.context.Response;
 import com.wolf.sina.AbstractSinaAnalyzeTest;
 import com.wolf.sina.config.ActionNames;
 import java.util.HashMap;
@@ -31,7 +32,7 @@ public class InsertSpiderUserServiceImplJUnitTest extends AbstractSinaAnalyzeTes
         Map<String, String> parameterMap = new HashMap<String, String>(2, 1);
         parameterMap.put("userName", "sina_20140007@163.com");
         parameterMap.put("password", "sina1024");
-        String result = this.testHandler.execute(ActionNames.INSERT_SPIDER_USER, parameterMap);
-        System.out.println(result);
+        Response response = this.testHandler.execute(ActionNames.INSERT_SPIDER_USER, parameterMap);
+        System.out.println(response.getResponseMessage());
     }
 }

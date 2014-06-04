@@ -1,5 +1,6 @@
 package com.wolf.sina.analyze;
 
+import com.wolf.framework.worker.context.Response;
 import com.wolf.sina.AbstractSinaAnalyzeTest;
 import com.wolf.sina.config.ActionNames;
 import java.util.HashMap;
@@ -30,7 +31,7 @@ public class InquireSinaUserByUserIdServiceImplJUnitTest extends AbstractSinaAna
     public void test() {
         Map<String, String> parameterMap = new HashMap<String, String>(2, 1);
         parameterMap.put("userId", "1020887697");
-        String result = this.testHandler.execute(ActionNames.INQUIRE_SINA_USER_BY_USER_ID, parameterMap);
-        System.out.println(result);
+        Response response = this.testHandler.execute(ActionNames.INQUIRE_SINA_USER_BY_USER_ID, parameterMap);
+        System.out.println(response.getResponseMessage());
     }
 }

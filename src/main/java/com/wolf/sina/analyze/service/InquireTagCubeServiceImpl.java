@@ -4,7 +4,7 @@ import com.wolf.framework.data.TypeEnum;
 import com.wolf.framework.local.InjectLocalService;
 import com.wolf.framework.service.Service;
 import com.wolf.framework.service.ServiceConfig;
-import com.wolf.framework.service.parameter.OutputConfig;
+import com.wolf.framework.service.parameter.ResponseConfig;
 import com.wolf.framework.worker.context.MessageContext;
 import com.wolf.sina.analyze.entity.TagCubeEntity;
 import com.wolf.sina.analyze.localservice.SinaLocalService;
@@ -18,9 +18,9 @@ import java.util.List;
  */
 @ServiceConfig(
         actionName = ActionNames.INQUIRE_TAG_CUBE,
-        returnParameter = {
-    @OutputConfig(name = "tag", typeEnum = TypeEnum.CHAR_32, desc = "标签"),
-    @OutputConfig(name = "num", typeEnum = TypeEnum.LONG, desc = "数量")
+        responseConfigs = {
+    @ResponseConfig(name = "tag", typeEnum = TypeEnum.CHAR_32, desc = "标签"),
+    @ResponseConfig(name = "num", typeEnum = TypeEnum.LONG, desc = "数量")
 },
         validateSession = false,
         page = true,

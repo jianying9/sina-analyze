@@ -1,5 +1,6 @@
 package com.wolf.sina.analyze;
 
+import com.wolf.framework.worker.context.Response;
 import com.wolf.sina.AbstractSinaAnalyzeTest;
 import com.wolf.sina.config.ActionNames;
 import java.util.HashMap;
@@ -31,7 +32,7 @@ public class InquireTagCubeServiceImplJUnitTest extends AbstractSinaAnalyzeTest 
         Map<String, String> parameterMap = new HashMap<String, String>(2, 1);
         parameterMap.put("pageIndex", "1");
         parameterMap.put("pageSize", "12");
-        String result = this.testHandler.execute(ActionNames.INQUIRE_TAG_CUBE, parameterMap);
-        System.out.println(result);
+        Response response = this.testHandler.execute(ActionNames.INQUIRE_TAG_CUBE, parameterMap);
+        System.out.println(response.getResponseMessage());
     }
 }

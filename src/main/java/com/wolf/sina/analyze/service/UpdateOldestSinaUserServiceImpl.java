@@ -4,8 +4,8 @@ import com.wolf.framework.data.TypeEnum;
 import com.wolf.framework.local.InjectLocalService;
 import com.wolf.framework.service.Service;
 import com.wolf.framework.service.ServiceConfig;
-import com.wolf.framework.service.parameter.InputConfig;
-import com.wolf.framework.service.parameter.OutputConfig;
+import com.wolf.framework.service.parameter.RequestConfig;
+import com.wolf.framework.service.parameter.ResponseConfig;
 import com.wolf.framework.task.InjectTaskExecutor;
 import com.wolf.framework.task.Task;
 import com.wolf.framework.task.TaskExecutor;
@@ -26,11 +26,11 @@ import java.util.Map;
  */
 @ServiceConfig(
         actionName = ActionNames.UPDATE_OLDEST_SINA_USER,
-        importantParameter = {
-    @InputConfig(name = "operate", typeEnum = TypeEnum.CHAR_32, desc = "操作:stop,test,run,check,init")
+        requestConfigs = {
+    @RequestConfig(name = "operate", typeEnum = TypeEnum.CHAR_32, desc = "操作:stop,test,run,check,init")
 },
-        returnParameter = {
-    @OutputConfig(name = "operate", typeEnum = TypeEnum.CHAR_32, desc = "操作:stop,test,run,check,init")
+        responseConfigs = {
+    @ResponseConfig(name = "operate", typeEnum = TypeEnum.CHAR_32, desc = "操作:stop,test,run,check,init")
 },
         validateSession = false,
         response = true,
@@ -75,13 +75,19 @@ public class UpdateOldestSinaUserServiceImpl implements Service {
                 boolean sinaUserExist;
                 insertMap.put("lastUpdateTime", "0");
                 for (String uid : followList) {
-                    sinaUserExist = this.sinaLocalService.existSinaUser(uid);
+                    sinaUserExist = this.sinaLocalService.existSinaUserException(userId);
                     if (sinaUserExist == false) {
-                        insertMap.put("userId", uid);
-                        this.sinaLocalService.insertSinaUser(insertMap);
+                        sinaUserExist = this.sinaLocalService.existSinaUser(uid);
+                        if (sinaUserExist == false) {
+                            insertMap.put("userId", uid);
+                            this.sinaLocalService.insertSinaUser(insertMap);
+                        }
                     }
                 }
             }
+        } else {
+            //写入异常队列
+            this.sinaLocalService.insertSinaUserException(userId);
         }
         //更新用户信息
         updateMap.put("lastUpdateTime", Long.toString(System.currentTimeMillis()));

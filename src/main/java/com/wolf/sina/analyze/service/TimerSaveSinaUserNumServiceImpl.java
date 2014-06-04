@@ -4,8 +4,8 @@ import com.wolf.framework.data.TypeEnum;
 import com.wolf.framework.local.InjectLocalService;
 import com.wolf.framework.service.Service;
 import com.wolf.framework.service.ServiceConfig;
-import com.wolf.framework.service.parameter.InputConfig;
-import com.wolf.framework.service.parameter.OutputConfig;
+import com.wolf.framework.service.parameter.RequestConfig;
+import com.wolf.framework.service.parameter.ResponseConfig;
 import com.wolf.framework.worker.context.MessageContext;
 import com.wolf.sina.analyze.localservice.SinaLocalService;
 import com.wolf.sina.config.ActionGroupNames;
@@ -19,12 +19,12 @@ import java.util.Map;
  */
 @ServiceConfig(
         actionName = ActionNames.TIMER_SAVE_SINA_USER_NUM,
-        importantParameter = {
-    @InputConfig(name = "time", typeEnum = TypeEnum.CHAR_32, desc = "时间")
+        requestConfigs = {
+    @RequestConfig(name = "time", typeEnum = TypeEnum.CHAR_32, desc = "时间")
 },
-        returnParameter = {
-    @OutputConfig(name = "time", typeEnum = TypeEnum.CHAR_32, desc = "时间"),
-    @OutputConfig(name = "num", typeEnum = TypeEnum.CHAR_10, desc = "数量")
+        responseConfigs = {
+    @ResponseConfig(name = "time", typeEnum = TypeEnum.CHAR_32, desc = "时间"),
+    @ResponseConfig(name = "num", typeEnum = TypeEnum.CHAR_10, desc = "数量")
 },
         validateSession = false,
         response = true,

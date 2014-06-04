@@ -1,6 +1,7 @@
 package com.wolf.sina.analyze;
 
 import com.wolf.framework.utils.TimeUtils;
+import com.wolf.framework.worker.context.Response;
 import com.wolf.sina.AbstractSinaAnalyzeTest;
 import com.wolf.sina.config.ActionNames;
 import java.util.HashMap;
@@ -33,7 +34,7 @@ public class TimerSaveSinaUserNumServiceImplJUnitTest extends AbstractSinaAnalyz
         time = time.substring(0, 13);
         Map<String, String> parameterMap = new HashMap<String, String>(2, 1);
         parameterMap.put("time", time);
-        String result = this.testHandler.execute(ActionNames.TIMER_SAVE_SINA_USER_NUM, parameterMap);
-        System.out.println(result);
+        Response response = this.testHandler.execute(ActionNames.TIMER_SAVE_SINA_USER_NUM, parameterMap);
+        System.out.println(response.getResponseMessage());
     }
 }

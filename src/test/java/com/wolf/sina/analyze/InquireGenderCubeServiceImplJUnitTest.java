@@ -1,5 +1,6 @@
 package com.wolf.sina.analyze;
 
+import com.wolf.framework.worker.context.Response;
 import com.wolf.sina.AbstractSinaAnalyzeTest;
 import com.wolf.sina.config.ActionNames;
 import java.util.HashMap;
@@ -29,7 +30,7 @@ public class InquireGenderCubeServiceImplJUnitTest extends AbstractSinaAnalyzeTe
     @Test
     public void test() {
         Map<String, String> parameterMap = new HashMap<String, String>(2, 1);
-        String result = this.testHandler.execute(ActionNames.INQUIRE_GENDER_CUBE, parameterMap);
-        System.out.println(result);
+        Response response = this.testHandler.execute(ActionNames.INQUIRE_GENDER_CUBE, parameterMap);
+        System.out.println(response.getResponseMessage());
     }
 }

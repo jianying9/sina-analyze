@@ -27,4 +27,7 @@ public class TableNames {
     //用户数量统计
     public final static String S_SINA_USER_CUBE = "S_SINA_USER_CUBE";
     public final static int S_SINA_USER_CUBE_INDEX = 7;
+    //新浪用户表
+    public final static String S_SINA_USER_EXCEPTON = "S_SINA_USER_EXCEPTON";
+    public final static int S_SINA_USER_EXCEPTION_INDEX = 8;
 }
