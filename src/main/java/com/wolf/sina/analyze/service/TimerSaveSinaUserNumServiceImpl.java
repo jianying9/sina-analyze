@@ -2,6 +2,7 @@ package com.wolf.sina.analyze.service;
 
 import com.wolf.framework.data.TypeEnum;
 import com.wolf.framework.local.InjectLocalService;
+import com.wolf.framework.service.ResponseState;
 import com.wolf.framework.service.Service;
 import com.wolf.framework.service.ServiceConfig;
 import com.wolf.framework.service.parameter.RequestConfig;
@@ -26,10 +27,13 @@ import java.util.Map;
     @ResponseConfig(name = "time", typeEnum = TypeEnum.CHAR_32, desc = "时间"),
     @ResponseConfig(name = "num", typeEnum = TypeEnum.CHAR_10, desc = "数量")
 },
+        responseStates = {
+    @ResponseState(state = "SUCCESS", desc = "保存成功")
+},
         validateSession = false,
         response = true,
         group = ActionGroupNames.SINA,
-        description = "保存下当前的sina用户总数量")
+        desc = "保存下当前的sina用户总数量")
 public class TimerSaveSinaUserNumServiceImpl implements Service {
 
     @InjectLocalService()

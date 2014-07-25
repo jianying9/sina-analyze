@@ -137,30 +137,29 @@ public class SipderLocalServiceImpl implements SpiderLocalService {
         webDriver.get(this.loginUrl);
         SeleniumUtils.waitUntilReady(webDriver, this.userNameXpath, 20);
         System.out.println(userName + ":输入帐号");
-        SeleniumUtils.waitTime(1000);
         //输入帐号密码
         WebElement userNameElement = webDriver.findElement(By.xpath(this.userNameXpath));
         //清空帐号输入框内容，防止异常
         userNameElement.clear();
-        SeleniumUtils.waitTime(1000);
+        SeleniumUtils.waitTime(2000);
         userNameElement.sendKeys(userName);
         System.out.println(password + ":输入密码");
-        SeleniumUtils.waitTime(1000);
+        SeleniumUtils.waitTime(2000);
         WebElement passwordElement = webDriver.findElement(By.xpath(this.passwordXpath));
         passwordElement.sendKeys(password);
         //登录
         System.out.println(userName + ":点击登录按钮");
-        SeleniumUtils.waitTime(1000);
+        SeleniumUtils.waitTime(2000);
         WebElement loginBtnElement = webDriver.findElement(By.xpath(this.loginBtnXpath));
         loginBtnElement.click();
         //等待登录页面跳转
         System.out.println(userName + ":等待登录成功页面跳转");
-        SeleniumUtils.waitUrlChange(this.loginUrl, webDriver, 20);
+        SeleniumUtils.waitUrlChange(this.loginUrl, webDriver, 10);
         //跳转到weibo页面
         System.out.println(userName + ":跳转到weibo页面");
         webDriver.get(this.weiboUrl);
         System.out.println(userName + ":等待weibo页面跳转");
-        SeleniumUtils.waitUrlChange(this.weiboUrl, webDriver, 20);
+        SeleniumUtils.waitUrlChange(this.weiboUrl, webDriver, 10);
         System.out.println(userName + ":登录成功获取cookie");
         SeleniumUtils.waitTime(1000);
         Set<Cookie> allCookies = webDriver.manage().getCookies();

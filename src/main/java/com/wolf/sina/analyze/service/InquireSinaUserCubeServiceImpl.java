@@ -2,6 +2,7 @@ package com.wolf.sina.analyze.service;
 
 import com.wolf.framework.data.TypeEnum;
 import com.wolf.framework.local.InjectLocalService;
+import com.wolf.framework.service.ResponseState;
 import com.wolf.framework.service.Service;
 import com.wolf.framework.service.ServiceConfig;
 import com.wolf.framework.service.parameter.ResponseConfig;
@@ -23,11 +24,14 @@ import java.util.List;
     @ResponseConfig(name = "num", typeEnum = TypeEnum.LONG, desc = "数量"),
     @ResponseConfig(name = "increment", typeEnum = TypeEnum.LONG, desc = "增量")
 },
+        responseStates = {
+    @ResponseState(state = "SUCCESS", desc = "查询成功")
+},
         validateSession = false,
         page = true,
         response = true,
         group = ActionGroupNames.SINA,
-        description = "查询sina用户总数统计")
+        desc = "查询sina用户总数统计")
 public class InquireSinaUserCubeServiceImpl implements Service {
 
     @InjectLocalService()

@@ -2,6 +2,7 @@ package com.wolf.sina.analyze.service;
 
 import com.wolf.framework.data.TypeEnum;
 import com.wolf.framework.local.InjectLocalService;
+import com.wolf.framework.service.ResponseState;
 import com.wolf.framework.service.Service;
 import com.wolf.framework.service.ServiceConfig;
 import com.wolf.framework.service.parameter.RequestConfig;
@@ -32,10 +33,13 @@ import java.util.Map;
         responseConfigs = {
     @ResponseConfig(name = "operate", typeEnum = TypeEnum.CHAR_32, desc = "操作:stop,test,run,check,init")
 },
+        responseStates = {
+    @ResponseState(state = "SUCCESS", desc = "更新成功")
+},
         validateSession = false,
         response = true,
         group = ActionGroupNames.SINA,
-        description = "更新最早的sina用户信息")
+        desc = "更新最早的sina用户信息")
 public class UpdateOldestSinaUserServiceImpl implements Service {
 
     private volatile String operate = "stop";

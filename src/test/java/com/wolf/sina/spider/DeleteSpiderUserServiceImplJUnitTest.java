@@ -30,7 +30,7 @@ public class DeleteSpiderUserServiceImplJUnitTest extends AbstractSinaAnalyzeTes
     @Test
     public void test() {
         Map<String, String> parameterMap = new HashMap<String, String>(2, 1);
-        parameterMap.put("userName", "sina_20140007@163.com");
+        parameterMap.put("userName", "sina_20140012@163.com");
         Response response = this.testHandler.execute(ActionNames.DELETE_SPIDER_USER, parameterMap);
         System.out.println(response.getResponseMessage());
     }

@@ -34,5 +34,17 @@
     "file.path": {
         "value": "/data/file",
         "describe": "redis连接池最小连接数"
+    },
+    "websocket": {
+        "value": "on",
+        "describe": "开启websocket"
+    },
+    "seed.des.key": {
+        "value": "4102gnab",
+        "describe": "访问校验密钥,8位字符"
+    },
+    "seed.error": {
+        "value": "120000",
+        "describe": "校验时间最大误差毫秒"
     }
 }

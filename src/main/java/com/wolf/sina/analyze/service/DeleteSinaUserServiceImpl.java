@@ -2,6 +2,7 @@ package com.wolf.sina.analyze.service;
 
 import com.wolf.framework.data.TypeEnum;
 import com.wolf.framework.local.InjectLocalService;
+import com.wolf.framework.service.ResponseState;
 import com.wolf.framework.service.Service;
 import com.wolf.framework.service.ServiceConfig;
 import com.wolf.framework.service.parameter.RequestConfig;
@@ -23,10 +24,13 @@ import com.wolf.sina.config.ActionNames;
         responseConfigs = {
     @ResponseConfig(name = "userId", typeEnum = TypeEnum.CHAR_32, desc = "sina帐号id")
 },
+        responseStates = {
+    @ResponseState(state = "SUCCESS", desc = "删除成功")
+},
         validateSession = false,
         response = true,
         group = ActionGroupNames.SINA,
-        description = "删除新浪用户")
+        desc = "删除新浪用户")
 public class DeleteSinaUserServiceImpl implements Service {
 
     @InjectLocalService()

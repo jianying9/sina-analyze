@@ -2,6 +2,7 @@ package com.wolf.sina.analyze.service;
 
 import com.wolf.framework.data.TypeEnum;
 import com.wolf.framework.local.InjectLocalService;
+import com.wolf.framework.service.ResponseState;
 import com.wolf.framework.service.Service;
 import com.wolf.framework.service.ServiceConfig;
 import com.wolf.framework.service.parameter.RequestConfig;
@@ -33,10 +34,13 @@ import java.util.Map;
     @ResponseConfig(name = "location", typeEnum = TypeEnum.CHAR_10, desc = "地区"),
     @ResponseConfig(name = "lastUpdateTime", typeEnum = TypeEnum.DATE_TIME, desc = "最后更新时间")
 },
+        responseStates = {
+    @ResponseState(state = "SUCCESS", desc = "查询成功")
+},
         validateSession = false,
         response = true,
         group = ActionGroupNames.SINA,
-        description = "新增新浪用户")
+        desc = "新增新浪用户")
 public class InquireSinaUserByUserIdServiceImpl implements Service {
 
     @InjectLocalService()

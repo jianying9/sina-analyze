@@ -1,6 +1,7 @@
 package com.wolf.sina.spider.service;
 
 import com.wolf.framework.local.InjectLocalService;
+import com.wolf.framework.service.ResponseState;
 import com.wolf.framework.service.Service;
 import com.wolf.framework.service.ServiceConfig;
 import com.wolf.framework.worker.context.MessageContext;
@@ -17,10 +18,13 @@ import java.util.Map;
  */
 @ServiceConfig(
         actionName = ActionNames.UPDATE_SPIDER_USER_COOKIE,
+        responseStates = {
+    @ResponseState(state = "SUCCESS", desc = "更新成功")
+},
         validateSession = false,
         response = true,
         group = ActionGroupNames.SPIDER,
-        description = "更新爬虫用户的cookie")
+        desc = "更新爬虫用户的cookie")
 public class UpdateSpiderUserCookieServiceImpl implements Service {
 
     @InjectLocalService()

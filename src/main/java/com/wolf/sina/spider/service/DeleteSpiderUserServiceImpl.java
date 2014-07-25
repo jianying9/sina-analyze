@@ -2,6 +2,7 @@ package com.wolf.sina.spider.service;
 
 import com.wolf.framework.data.TypeEnum;
 import com.wolf.framework.local.InjectLocalService;
+import com.wolf.framework.service.ResponseState;
 import com.wolf.framework.service.Service;
 import com.wolf.framework.service.ServiceConfig;
 import com.wolf.framework.service.parameter.RequestConfig;
@@ -22,10 +23,13 @@ import com.wolf.sina.spider.localservice.SpiderLocalService;
 }, responseConfigs = {
     @ResponseConfig(name = "userName", typeEnum = TypeEnum.CHAR_32, desc = "爬虫帐号", filterTypes = {})
 },
+    responseStates = {
+    @ResponseState(state = "SUCCESS", desc = "删除成功")
+},
         validateSession = false,
         response = true,
         group = ActionGroupNames.SPIDER,
-        description = "爬虫用户")
+        desc = "爬虫用户")
 public class DeleteSpiderUserServiceImpl implements Service {
 
     @InjectLocalService()

@@ -24,16 +24,21 @@ public class SeleniumUtils {
     }
 
     public static void waitUrlChange(String oldUrl, WebDriver webDriver, long timeOutInSeconds) {
+        System.out.println("判断页面是否跳转...");
         String newUrl = webDriver.getCurrentUrl();
         long times = 0;
-        while (newUrl.equals(oldUrl) && times < 10) {
+        System.out.println("times:" + times);
+        System.out.println("oldUrl:" + oldUrl);
+        while (newUrl.equals(oldUrl) && times < 5) {
+            System.out.println("newUrl:" + newUrl);
             try {
-                Thread.sleep(2000);
+                Thread.sleep(1000);
             } catch (InterruptedException ex) {
             }
             newUrl = webDriver.getCurrentUrl();
             times++;
         }
+        System.out.println("newUrl:" + newUrl);
         WebDriverWait webDriverWait = new WebDriverWait(webDriver, timeOutInSeconds);
         webDriverWait.until(ExpectedConditions.presenceOfElementLocated(By.xpath(bodyXpath)));
     }

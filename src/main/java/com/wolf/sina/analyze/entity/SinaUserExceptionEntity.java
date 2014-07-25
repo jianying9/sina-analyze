@@ -14,8 +14,7 @@ import java.util.Map;
  * @author aladdin
  */
 @RDaoConfig(
-        tableName = TableNames.S_SINA_USER_EXCEPTON,
-        dbIndex = TableNames.S_SINA_USER_EXCEPTION_INDEX)
+        tableName = TableNames.S_SINA_USER_EXCEPTON)
 public final class SinaUserExceptionEntity extends Entity {
 
     @RColumnConfig(columnTypeEnum = ColumnTypeEnum.KEY, desc = "sina用户id")

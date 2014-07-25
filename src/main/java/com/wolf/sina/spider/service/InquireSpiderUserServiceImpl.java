@@ -2,6 +2,7 @@ package com.wolf.sina.spider.service;
 
 import com.wolf.framework.data.TypeEnum;
 import com.wolf.framework.local.InjectLocalService;
+import com.wolf.framework.service.ResponseState;
 import com.wolf.framework.service.Service;
 import com.wolf.framework.service.ServiceConfig;
 import com.wolf.framework.service.parameter.ResponseConfig;
@@ -24,11 +25,14 @@ import java.util.List;
     @ResponseConfig(name = "cookie", typeEnum = TypeEnum.CHAR_4000, desc = "cookie", filterTypes = {}),
     @ResponseConfig(name = "lastUpdateTime", typeEnum = TypeEnum.DATE_TIME, desc = "最后更新时间", filterTypes = {})
 },
+        responseStates = {
+    @ResponseState(state = "SUCCESS", desc = "查询成功")
+},
         validateSession = false,
         page = true,
         response = true,
         group = ActionGroupNames.SPIDER,
-        description = "查询爬虫用户")
+        desc = "查询爬虫用户")
 public class InquireSpiderUserServiceImpl implements Service {
 
     @InjectLocalService()

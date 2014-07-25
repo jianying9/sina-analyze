@@ -14,8 +14,7 @@ import java.util.Map;
  * @author aladdin
  */
 @RDaoConfig(
-        tableName = TableNames.S_SPIDER_USER,
-        dbIndex = TableNames.S_SPIDER_USER_INDEX)
+        tableName = TableNames.S_SPIDER_USER)
 public final class SpiderUserEntity extends Entity {
 
     @RColumnConfig(columnTypeEnum = ColumnTypeEnum.KEY, desc = "爬虫帐号")
