@@ -66,29 +66,28 @@ public class UpdateOldestSinaUserServiceImpl implements Service {
             updateMap.put("location", infoEntity.getLocation());
             updateMap.put("tag", infoEntity.getTag());
             //获取粉丝
-            List<String> followList = this.spiderLocalService.getFollow(userId);
-            if (followList.isEmpty() == false) {
-                StringBuilder followBuilder = new StringBuilder(11 * followList.size());
-                for (String follow : followList) {
-                    followBuilder.append(follow).append(',');
-                }
-                followBuilder.setLength(followBuilder.length() - 1);
-                updateMap.put("follow", followBuilder.toString());
-                //
-                Map<String, String> insertMap = new HashMap<String, String>(8, 1);
-                boolean sinaUserExist;
-                insertMap.put("lastUpdateTime", "0");
-                for (String uid : followList) {
-                    sinaUserExist = this.sinaLocalService.existSinaUserException(userId);
-                    if (sinaUserExist == false) {
-                        sinaUserExist = this.sinaLocalService.existSinaUser(uid);
-                        if (sinaUserExist == false) {
-                            insertMap.put("userId", uid);
-                            this.sinaLocalService.insertSinaUser(insertMap);
-                        }
-                    }
-                }
-            }
+//            List<String> followList = this.spiderLocalService.getFollow(userId);
+//            if (followList.isEmpty() == false) {
+//                StringBuilder followBuilder = new StringBuilder(11 * followList.size());
+//                for (String follow : followList) {
+//                    followBuilder.append(follow).append(',');
+//                }
+//                followBuilder.setLength(followBuilder.length() - 1);
+//                updateMap.put("follow", followBuilder.toString());
+//                Map<String, String> insertMap = new HashMap<String, String>(8, 1);
+//                boolean sinaUserExist;
+//                insertMap.put("lastUpdateTime", "0");
+//                for (String uid : followList) {
+//                    sinaUserExist = this.sinaLocalService.existSinaUserException(userId);
+//                    if (sinaUserExist == false) {
+//                        sinaUserExist = this.sinaLocalService.existSinaUser(uid);
+//                        if (sinaUserExist == false) {
+//                            insertMap.put("userId", uid);
+//                            this.sinaLocalService.insertSinaUser(insertMap);
+//                        }
+//                    }
+//                }
+//            }
         } else {
             //写入异常队列
             this.sinaLocalService.insertSinaUserException(userId);
