@@ -17,7 +17,7 @@ import javax.ejb.Stateless;
 @Startup
 public class SinaTimerSessionBean extends AbstractTimer implements SinaTimerSessionBeanLocal {
 
-    @Schedule(minute = "0", second = "0", dayOfMonth = "*", month = "*", year = "*", hour = "19", dayOfWeek = "*", persistent = false)
+    @Schedule(minute = "0", second = "0", dayOfMonth = "*", month = "*", year = "*", hour = "8", dayOfWeek = "*", persistent = false)
     @Override
     public void refreshSpiderUserCookie() {
         System.out.println("timer:refreshSpiderUserCookie----刷新爬虫:UPDATE_OLDEST_SINA_USER:init");
@@ -27,7 +27,7 @@ public class SinaTimerSessionBean extends AbstractTimer implements SinaTimerSess
         System.out.println(result);
     }
 
-    @Schedule(minute = "*", second = "0", dayOfMonth = "*", month = "*", year = "*", hour = "*", dayOfWeek = "*", persistent = false)
+    @Schedule(minute = "*", second = "0", dayOfMonth = "*", month = "*", year = "*", hour = "8-17", dayOfWeek = "*", persistent = false)
     @Override
     public void checkUpdateSinaUserTask() {
         System.out.println("timer:checkUpdateSinaUserTask----检查sina用户抓取任务是否运行:UPDATE_OLDEST_SINA_USER:check");
@@ -36,11 +36,21 @@ public class SinaTimerSessionBean extends AbstractTimer implements SinaTimerSess
         String result = this.executeService(ActionNames.UPDATE_OLDEST_SINA_USER, parameterMap);
         System.out.println(result);
     }
+    
+    @Schedule(minute = "0-10", second = "0", dayOfMonth = "*", month = "*", year = "*", hour = "18", dayOfWeek = "*", persistent = false)
+    @Override
+    public void stopUpdateSinaUserTask() {
+        System.out.println("timer:stopUpdateSinaUserTask----停止sina爬虫任务运行:UPDATE_OLDEST_SINA_USER:stop");
+        Map<String, String> parameterMap = new HashMap<String, String>(2, 1);
+        parameterMap.put("operate", "stop");
+        String result = this.executeService(ActionNames.UPDATE_OLDEST_SINA_USER, parameterMap);
+        System.out.println(result);
+    }
 
     /**
      *
      */
-    @Schedule(minute = "0", second = "0", dayOfMonth = "*", month = "*", year = "*", hour = "*", dayOfWeek = "*", persistent = false)
+//    @Schedule(minute = "0", second = "0", dayOfMonth = "*", month = "*", year = "*", hour = "0", dayOfWeek = "*", persistent = false)
     @Override
     public void saveSinaUserNumPerHour() {
         System.out.println("timer:saveSinaUserNumPerHout----每小时保存下单前sina用户的数量:TIMER_SAVE_SINA_USER_NUM");

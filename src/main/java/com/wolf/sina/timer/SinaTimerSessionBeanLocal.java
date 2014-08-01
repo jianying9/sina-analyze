@@ -13,5 +13,7 @@ public interface SinaTimerSessionBeanLocal {
     
     public void checkUpdateSinaUserTask();
     
+    public void stopUpdateSinaUserTask();
+    
     public void saveSinaUserNumPerHour();
 }
