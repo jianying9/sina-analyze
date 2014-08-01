@@ -251,7 +251,7 @@ public class SinaLocalServiceImpl implements SinaLocalService {
         HTableInterface hTableInterface = this.hTablePool.getTable(this.hTableName);
         try {
             Result result = hTableInterface.get(get);
-            if (result != null) {
+            if (result != null && result.isEmpty() == false) {
                 resultMap = new HashMap<String, String>(result.size() + 1, 1);
                 resultMap.put("userId", userId);
                 String[] fileds = {"gender", "nickName", "empName", "location", "tag", "follow", "lastUpdateTime"};

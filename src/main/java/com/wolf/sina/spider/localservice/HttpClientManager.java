@@ -37,9 +37,9 @@ public class HttpClientManager {
             }
             this.lastUseTimeMap.put(client, currentTime);
         }
-        if (currentTime - lastTime < 500) {
+        if (currentTime - lastTime < 1500) {
             try {
-                Thread.sleep(500);
+                Thread.sleep(1500);
             } catch (InterruptedException ex) {
             }
         }
